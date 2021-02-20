@@ -26,16 +26,20 @@ def enter_basic_information():
 enter_basic_information()
 
 
-class Categories:
-    def get_categories():
-        """Read categories.txt file to set expense categories"""
+def get_categories():
+        """Read categories.txt file to set default expense categories"""
         categories = []
 
-        with open("categories.txt", "r") as txt_file:
-            list = txt_file.read().splitlines()
-        print("Current expense categories are: {}".format(list))
-    
-    get_categories()
-
-    # def add_categories():
-    #     """Prompt user to add a category or 'quit' to use current list"""
+        with open("categories.txt", "r") as filename:
+            category_list = filename.read()
+            print("Current expense categories are: \n{}".format(category_list))
+        prompt_new_cat = input("Would you like to add a category? [y / n] ").upper()
+        
+        """Loop through category until user is satisfied"""
+        while prompt_new_cat == "Y":
+                added = input("What is the name of the category you want to add? ")
+                with open("categories.txt", "a") as filename:
+                    new_category_list = filename.write("\n" + added)
+                    prompt_new_cat = input("Would you like to add a category? [y / n] ").upper()
+        print("Current expense categories are: \n{}".format(category_list))
+get_categories()
