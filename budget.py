@@ -7,6 +7,7 @@ last updated on: 2/19/2021
 
 """
 
+from os import read
 import pyfiglet
 
 
@@ -26,20 +27,29 @@ def enter_basic_information():
 enter_basic_information()
 
 
-def get_categories():
-        """Read categories.txt file to set default expense categories"""
-        categories = []
+def cat_list():
 
-        with open("categories.txt", "r") as filename:
-            category_list = filename.read()
-            print("Current expense categories are: \n{}".format(category_list))
-        prompt_new_cat = input("Would you like to add a category? [y / n] ").upper()
-        
-        """Loop through category until user is satisfied"""
-        while prompt_new_cat == "Y":
+    def read_categories():
+            """Read categories.txt file to set default expense categories"""
+
+            with open("categories.txt", "r") as filename:
+                categories = filename.read()
+                print("Current expense categories are: \n{}".format(categories))
+                filename.close()
+    read_categories()
+
+
+    def write_categories():        
+            """Loop through category until user is satisfied"""
+            prompt_new_cat = input(str(("Would you like to add a category? [y / n] "))).upper()
+            while prompt_new_cat == "Y":
                 added = input("What is the name of the category you want to add? ")
                 with open("categories.txt", "a") as filename:
-                    new_category_list = filename.write("\n" + added)
-                    prompt_new_cat = input("Would you like to add a category? [y / n] ").upper()
-        print("Current expense categories are: \n{}".format(category_list))
-get_categories()
+                    filename.write("\n" + added)
+                prompt_new_cat = input("Would you like to add a category? [y / n] ").upper()
+    write_categories()
+
+    categories = open("categories.txt", "r")
+    categories = categories.read()
+    print("Current expense categories are: \n{}".format(categories))
+cat_list()
