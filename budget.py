@@ -3,11 +3,12 @@ Branham Budget Tracker
 
 created by: Anthony Branham
 created on: 2/19/2021
-last updated on: 2/25/2021
+last updated on: 2/26/2021
 
 """
 
 import pandas as pd
+from pandas.core.frame import DataFrame
 import xlsxwriter
 from openpyxl import load_workbook
 import os.path
@@ -25,7 +26,7 @@ def get_name():
     """Get user's name and generate welcome message"""
     prompt_name = input("Please enter your first name: ")
     first_name = str(prompt_name).upper()
-    print("\n\n\nWelcome to BBT, {}!".format(first_name))
+    print("\n\n\nWelcome to BBT, {}!\n".format(first_name))
 get_name()
 
 
@@ -40,7 +41,7 @@ def create_workbook():
 def set_categories():
             try:
                 df1 = pd.DataFrame(            
-                    index=["Mortgage/Rent", "Utilities", "Transportation", "Food", "Entertainment", "Debts", "Other"],
+                    index=["Housing", "Utilities", "Transportation", "Groceries", "Entertainment", "Debts", "Other"],
                     columns=["Planned", "Spent", "Remaining"])
                 df1_verify = load_workbook("BudgetTracker.xlsx", read_only=True)
                 if "Categories" in df1_verify.sheetnames:
@@ -56,7 +57,7 @@ def create_inc_sheet():
         try:
             df2 = pd.DataFrame(            
                 index=[],
-                columns=["Income", "Planned", "Received"])
+                columns=["Date", "Income type", "Income Amount"])
             df2_verify = load_workbook("BudgetTracker.xlsx", read_only=True)
             if "Incomes" in df2_verify.sheetnames:
                 pass
@@ -70,14 +71,14 @@ def create_inc_sheet():
 def create_exp_sheet():
         try:
             df3 = pd.DataFrame(            
-                index=[],
-                columns=["Income", "Planned", "Received"])
-            df2_verify = load_workbook("BudgetTracker.xlsx", read_only=True)
-            if "Incomes" in df2_verify.sheetnames:
+                index= [],
+                columns=["Date", "Expense Type", "Expense Amount", "Merchant", "Notes"])
+            df3_verify = load_workbook("BudgetTracker.xlsx", read_only=True)
+            if "Expenses" in df3_verify.sheetnames:
                 pass
             else:
                 with pd.ExcelWriter("BudgetTracker.xlsx", mode="a", engine="openpyxl") as writer:
-                    df2.to_excel(writer, sheet_name="Incomes")
+                    df3.to_excel(writer, sheet_name="Expenses")
         except PermissionError:
             print("Can't access because Excel file is open.  Please close the file and try again")
             print_mainmenu()
@@ -128,11 +129,17 @@ def income_menu():
         inc_option = input("Enter an option: ")
         if inc_option.lower() == "q":
             print("Exiting program...")
-        # elif inc_option = "1":
+        elif inc_option == "1":
+            df_income = pd.read_excel("BudgetTracker.xlsx", sheet_name="Incomes")
+            if df_income.empty:
+                print("*** No incomes have been added yet ***\n")
+                income_menu()
+            else:
+                print(df_income)
 
-        # elif inc_option = "2":
+        # elif inc_option == "2":
 
-        # elif inc_option = "3":
+        # elif inc_option == "3":
 
         elif inc_option == "4":
             print_mainmenu()
@@ -142,6 +149,7 @@ def income_menu():
 
 
 def expenses_menu():
+    create_exp_sheet()
     exp_option = ""
     while exp_option == "":
         """Print out of navigation menu """
@@ -157,11 +165,18 @@ def expenses_menu():
         exp_option = input("Enter an option: ")
         if exp_option.lower() == "q":
             print("Exiting program...")
-        # elif inc_option = "1":
+        elif exp_option == "1":
+            df_expense = pd.read_excel("BudgetTracker.xlsx", sheet_name="Expenses")
+            if df_expense.empty:
+                print("*** No expenses have been added yet ***\n")
+                expenses_menu()
+            else:
+                print(df_expense)
+                expenses_menu()
 
-        # elif inc_option = "2":
+        # elif exp_option == "2":
 
-        # elif inc_option = "3":
+        # elif exp_option == "3":
 
         elif exp_option == "4":
             print_mainmenu()
