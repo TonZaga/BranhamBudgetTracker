@@ -19,4 +19,7 @@ The features that were used for this project are:
 2. Implement a “master loop” console application where the user can repeatedly enter commands/perform actions, including choosing to exit the program.
         - Added a text navigation menu that users can repeatedly add incomes, expenses, generate breakdowns, or have the option to quit the program altogether
 
+3. Calculate and display data based on an external factor
+        - Upon entering a name at startup, we get today's date and notify the user how many days are left in the month.
+
 ```
