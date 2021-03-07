@@ -6,13 +6,14 @@ created on: 2/19/2021
 last updated on: 2/26/2021
 
 """
-
+import datetime
+from calendar import monthrange
+from numpy.lib.npyio import load
 import pandas as pd
-from pandas.core.frame import DataFrame
+from pandas.core.indexes.base import Index
 import xlsxwriter
 from openpyxl import load_workbook
 import os.path
-import csv
 import pyfiglet
 
 
@@ -30,6 +31,19 @@ def get_name():
 get_name()
 
 
+def month_remaining():
+    """Get month and days remaining"""
+    today = datetime.datetime.today()
+    today_date = today.strftime("%B %d, %Y")
+    print("Today is " + today_date)
+    day_of = int(today.strftime("%d"))
+    now = datetime.datetime.now()
+    month_end = monthrange(now.year, now.month)[1]
+    days_remaining = (month_end) - (day_of)
+    print("There are {} days remaining in the month.\n".format(days_remaining))
+month_remaining()
+
+
 def create_workbook():
         if not os.path.exists("BudgetTracker.xlsx"):
             writer = pd.ExcelWriter("BudgetTracker.xlsx", engine="xlsxwriter")
@@ -43,6 +57,7 @@ def set_categories():
                 df1 = pd.DataFrame(            
                     index=["Housing", "Utilities", "Transportation", "Groceries", "Entertainment", "Debts", "Other"],
                     columns=["Planned", "Spent", "Remaining"])
+                df1 = df1.fillna(0)
                 df1_verify = load_workbook("BudgetTracker.xlsx", read_only=True)
                 if "Categories" in df1_verify.sheetnames:
                     pass
@@ -51,7 +66,22 @@ def set_categories():
                         df1.to_excel(writer, sheet_name="Categories")
             except PermissionError:
                 print("Can't access because Excel file is open.  Please close the file and try again")
-                print_mainmenu()
+                mainmenu()
+
+
+def add_category():
+    df = pd.read_excel("BudgetTracker.xlsx", sheet_name="Categories")
+    df = df.fillna(0)
+    add_cat = input("What category would you like to add? ")
+    df1 = pd.DataFrame(data=[add_cat])
+    df = pd.concat([df, df1], ignore_index=True)
+    print(df)
+    # with pd.ExcelWriter("BudgetTracker.xlsx", mode="a", engine="openpyxl") as writer:
+    #     add_cat.to_excel(writer, sheet_name="Categories")
+    # new_cat = pd.concat(([add_cat, df1]), ignore_index=0)
+    # with pd.ExcelWriter("BudgetTracker.xlsx", mode="a", engine="openpyxl") as writer:
+    #     new_cat.to_excel(writer, sheet_name="Categories")
+
 
 def create_inc_sheet():
         try:
@@ -66,7 +96,8 @@ def create_inc_sheet():
                     df2.to_excel(writer, sheet_name="Incomes")
         except PermissionError:
             print("Can't access because Excel file is open.  Please close the file and try again")
-            print_mainmenu()
+            mainmenu()
+
 
 def create_exp_sheet():
         try:
@@ -81,19 +112,20 @@ def create_exp_sheet():
                     df3.to_excel(writer, sheet_name="Expenses")
         except PermissionError:
             print("Can't access because Excel file is open.  Please close the file and try again")
-            print_mainmenu()
+            mainmenu()
 
 
-def print_mainmenu():
+def mainmenu():
     main_option = ""
     while main_option == "":
         """Print out of navigation menu """
         print(30 * '-')
-        print("   MAIN MENU   ")
+        print("<<<<  MAIN MENU  >>>>")
         print(30 * '-')
-        print("1. Income menu")
-        print("2. Expenses menu")
-        print("3. Generate breakdown")
+        print("1. Category menu")
+        print("2. Income menu")
+        print("3. Expenses menu")
+        print("4. Generate breakdown")
         print("q. Quit")
         print(30 * '-')
         option = input("Enter an option: ")
@@ -101,24 +133,67 @@ def print_mainmenu():
             print("Exiting program...")
             exit()
         elif option == "1":
-            main_option = income_menu()
+            main_option = category_menu()
         elif option == "2":
-            main_option = expenses_menu()
+            main_option = income_menu()
         elif option == "3":
+            main_option = expenses_menu()
+        elif option == "4":
             print("Generating breakdown")
+            # Add table for calculations between income/expense w/ exception #
         else:
             print("Invalid option.  Please try again")
 
 
-def income_menu():
+def category_menu():
     create_workbook()
-    set_categories()
+    set_categories() 
+    cat_option = ""
+    while cat_option == "":
+        """Print out of navigation menu """
+        print(30 * '-')
+        print("<<<<  CATEGORY MENU  >>>>")
+        print(30 * '-')
+        print("1. Show categories")
+        print("2. Enter new category")
+        print("3. Edit existing category")
+        print("4. return to Main menu")
+        print("q. Quit")
+        print(30 * '-')
+        cat_option = input("Enter an option: ")
+        if cat_option.lower() == "q":
+            print("Exiting program...")
+        elif cat_option == "1":
+            df_category = pd.read_excel("BudgetTracker.xlsx", sheet_name="Categories", index_col=0)
+            if df_category.empty:
+                print("*** No categories have been added yet ***\n")
+                category_menu()
+            else:
+                print(df_category)
+                category_menu()
+
+        elif cat_option == "2":
+            add_category()
+            print("Category has been added\n")
+            category_menu()
+
+        # elif cat_option == "3":
+            # Edit an existing income (index #?)
+
+        elif cat_option == "4":
+            mainmenu()
+        else:
+            print("Invalid menu option.  Please try again")
+            category_menu()
+            
+            
+def income_menu():
     create_inc_sheet() 
     inc_option = ""
     while inc_option == "":
         """Print out of navigation menu """
         print(30 * '-')
-        print("   INCOME MENU   ")
+        print("<<<<  INCOME MENU  >>>>")
         print(30 * '-')
         print("1. Show Income(s)")
         print("2. Enter new income")
@@ -138,11 +213,12 @@ def income_menu():
                 print(df_income)
 
         # elif inc_option == "2":
-
+            # Enter new income(s)
         # elif inc_option == "3":
+            # Edit an existing income (index #?)
 
         elif inc_option == "4":
-            print_mainmenu()
+            mainmenu()
         else:
             print("Invalid menu option.  Please try again")
             income_menu()
@@ -154,7 +230,7 @@ def expenses_menu():
     while exp_option == "":
         """Print out of navigation menu """
         print(30 * '-')
-        print("   EXPENSES MENU   ")
+        print("<<<<  EXPENSES MENU  >>>>")
         print(30 * '-')
         print("1. Show expense(s)")
         print("2. Enter new expense")
@@ -175,13 +251,13 @@ def expenses_menu():
                 expenses_menu()
 
         # elif exp_option == "2":
-
+            # Enter new expense(s)
         # elif exp_option == "3":
-
+            # Editing existing expense (index #?)
         elif exp_option == "4":
-            print_mainmenu()
+            mainmenu()
         else:
             print("Invalid menu option.  Please try again")
             expenses_menu()
 
-print_mainmenu()
+mainmenu()
