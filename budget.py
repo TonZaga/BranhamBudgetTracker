@@ -69,13 +69,31 @@ def set_categories():
                 mainmenu()
 
 
-def add_category():
-    df = pd.read_excel("BudgetTracker.xlsx", sheet_name="Categories")
+def set_budget():
+    df = pd.read_excel("BudgetTracker.xlsx", sheet_name="Categories", usecols=["Planned", "Remaining", "Spent"])
     df = df.fillna(0)
-    add_cat = input("What category would you like to add? ")
-    df1 = pd.DataFrame(data=[add_cat])
-    df = pd.concat([df, df1], ignore_index=True)
-    print(df)
+    user_cat = input("What category would you like to set a budget for? ").upper()
+    budget_amount = float(input("Enter budget amount: "))
+    if user_cat == "HOUSING":
+        df.loc[0, 1] = budget_amount
+    if user_cat == "UTILITIES":
+        df.loc[1, "Planned"] = budget_amount
+    if user_cat == "TRANSPORTATION":
+        df.loc[2, "Planned"] = budget_amount
+    if user_cat == "GROCERIES":
+        df.loc[3, "Planned"] = budget_amount
+    if user_cat == "ENTERTAINMENT":
+        df.loc[4, "Planned"] = budget_amount
+    if user_cat == "DEBTS":
+        df.loc[5, "Planned"] = budget_amount
+    if user_cat == "OTHER":
+        df.loc[6, "Planned"] = budget_amount
+    else:
+        print("Invalid category selection")
+
+    # df1 = pd.DataFrame(data=[add_cat])
+    # df = pd.concat([df, df1], ignore_index=True)
+    # print(df)
     # with pd.ExcelWriter("BudgetTracker.xlsx", mode="a", engine="openpyxl") as writer:
     #     add_cat.to_excel(writer, sheet_name="Categories")
     # new_cat = pd.concat(([add_cat, df1]), ignore_index=0)
@@ -155,8 +173,8 @@ def category_menu():
         print("<<<<  CATEGORY MENU  >>>>")
         print(30 * '-')
         print("1. Show categories")
-        print("2. Enter new category")
-        print("3. Edit existing category")
+        print("2. Set budget amount")
+        print("3. Edit existing budget")
         print("4. return to Main menu")
         print("q. Quit")
         print(30 * '-')
@@ -173,9 +191,15 @@ def category_menu():
                 category_menu()
 
         elif cat_option == "2":
-            add_category()
-            print("Category has been added\n")
-            category_menu()
+            df_category = pd.read_excel("BudgetTracker.xlsx", sheet_name="Categories", index_col=0)
+            if df_category.empty:
+                print("*** No categories have been added yet ***\n")
+                category_menu()
+            else:
+                print(df_category)
+                set_budget()
+                print("Budget has been set\n")
+                category_menu()
 
         # elif cat_option == "3":
             # Edit an existing income (index #?)
