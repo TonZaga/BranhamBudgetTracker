@@ -8,11 +8,7 @@ last updated on: 2/26/2021
 """
 import datetime
 from calendar import monthrange
-from numpy.lib.npyio import load
-import pandas as pd
-from pandas.core.indexes.base import Index
-import xlsxwriter
-from openpyxl import load_workbook
+from openpyxl import Workbook
 import os.path
 import pyfiglet
 
@@ -46,91 +42,120 @@ month_remaining()
 
 def create_workbook():
         if not os.path.exists("BudgetTracker.xlsx"):
-            writer = pd.ExcelWriter("BudgetTracker.xlsx", engine="xlsxwriter")
-            writer.save()
+            wb = Workbook()
+            ws = wb.active
+            ws.title = "Budget"
+            ws1 = wb.create_sheet("Sheet_B")
+            ws1.title = "Income"
+            ws1.sheet_properties.tabColor = "00FF00"
+            ws2 = wb.create_sheet("Sheet_C")
+            ws2.title = "Expenses"
+            ws2.sheet_properties.tabColor = "FF0000"
+            wb.save(filename="BudgetTracker.xlsx")
         else:
             pass
 
+def stock_categories():
+    wb = Workbook()
+    Budget = wb.active
+    c1 = Budget.cell(row = 1, column = 1)
+    c1.value = "Housing"
+    c2 = Budget.cell(row = 2, column = 1)
+    c2.value = "Utilities"
+    c3 = Budget.cell(row = 3, column = 1)
+    c3.value = "Transportation"
+    c4 = Budget.cell(row = 4, column = 1)
+    c4.value = "Groceries"
+    c5 = Budget.cell(row = 5, column = 1)
+    c5.value = "Entertainment"
+    c6 = Budget.cell(row = 6, column = 1)
+    c6.value = "Debts"
+    c7 = Budget.cell(row = 7, column = 1)
+    c7.value = "Other"
+
+
     
-def set_categories():
-            try:
-                df1 = pd.DataFrame(            
-                    index=["Housing", "Utilities", "Transportation", "Groceries", "Entertainment", "Debts", "Other"],
-                    columns=["Planned", "Spent", "Remaining"])
-                df1 = df1.fillna(0)
-                df1_verify = load_workbook("BudgetTracker.xlsx", read_only=True)
-                if "Categories" in df1_verify.sheetnames:
-                    pass
-                else:
-                    with pd.ExcelWriter("BudgetTracker.xlsx", mode="w") as writer:
-                        df1.to_excel(writer, sheet_name="Categories")
-            except PermissionError:
-                print("Can't access because Excel file is open.  Please close the file and try again")
-                mainmenu()
+# def set_categories():
+#             try:
+#                 df1 = pd.DataFrame(
+#                     {"Planned":[0, 0, 0, 0, 0, 0, 0],
+#                     "Spent":[0, 0, 0, 0, 0, 0, 0],
+#                     "Remaining":[0, 0, 0, 0, 0, 0, 0]})
+#                 index_ = ["Housing", "Utilities", "Transportation", "Groceries", "Entertainment", "Debts", "Other"]
+#                 df1.index = index_
+#                 df1_verify = load_workbook("BudgetTracker.xlsx", read_only=True)
+#                 if "Categories" in df1_verify.sheetnames:
+#                     pass
+#                 else:
+#                     with pd.ExcelWriter("BudgetTracker.xlsx", mode="w") as writer:
+#                         df1.to_excel(writer, sheet_name="Categories")
+#             except PermissionError:
+#                 print("Can't access because Excel file is open.  Please close the file and try again")
+#                 mainmenu()
 
 
-def set_budget():
-    df = pd.read_excel("BudgetTracker.xlsx", sheet_name="Categories", usecols=["Planned", "Remaining", "Spent"])
-    df = df.fillna(0)
-    user_cat = input("What category would you like to set a budget for? ").upper()
-    budget_amount = float(input("Enter budget amount: "))
-    if user_cat == "HOUSING":
-        df.loc[0, 1] = budget_amount
-    if user_cat == "UTILITIES":
-        df.loc[1, "Planned"] = budget_amount
-    if user_cat == "TRANSPORTATION":
-        df.loc[2, "Planned"] = budget_amount
-    if user_cat == "GROCERIES":
-        df.loc[3, "Planned"] = budget_amount
-    if user_cat == "ENTERTAINMENT":
-        df.loc[4, "Planned"] = budget_amount
-    if user_cat == "DEBTS":
-        df.loc[5, "Planned"] = budget_amount
-    if user_cat == "OTHER":
-        df.loc[6, "Planned"] = budget_amount
-    else:
-        print("Invalid category selection")
+# def set_budget():
+#     df = pd.read_excel("BudgetTracker.xlsx", sheet_name="Categories", usecols=["Planned", "Remaining", "Spent"])
+#     user_cat = input("What category would you like to set a budget for? ").upper()
+#     budget_amount = float(input("Enter budget amount: "))
+#     print(user_cat)
+#     if user_cat == "HOUSING":
+#         df.loc[1, "Planned"] = budget_amount
+#     elif user_cat == "UTILITIES":
+#         df.loc[1, "Planned"] = budget_amount
+#     elif user_cat == "TRANSPORTATION":
+#         df.loc[2, "Planned"] = budget_amount
+#     elif user_cat == "GROCERIES":
+#         df.loc[3, "Planned"] = budget_amount
+#     elif user_cat == "ENTERTAINMENT":
+#         df.loc[4, "Planned"] = budget_amount
+#     elif user_cat == "DEBTS":
+#         df.loc[5, "Planned"] = budget_amount
+#     elif user_cat == "OTHER":
+#         df.loc[6, "Planned"] = budget_amount
+#     else:
+#         print("Invalid category selection")
 
-    # df1 = pd.DataFrame(data=[add_cat])
-    # df = pd.concat([df, df1], ignore_index=True)
-    # print(df)
-    # with pd.ExcelWriter("BudgetTracker.xlsx", mode="a", engine="openpyxl") as writer:
-    #     add_cat.to_excel(writer, sheet_name="Categories")
-    # new_cat = pd.concat(([add_cat, df1]), ignore_index=0)
-    # with pd.ExcelWriter("BudgetTracker.xlsx", mode="a", engine="openpyxl") as writer:
-    #     new_cat.to_excel(writer, sheet_name="Categories")
-
-
-def create_inc_sheet():
-        try:
-            df2 = pd.DataFrame(            
-                index=[],
-                columns=["Date", "Income type", "Income Amount"])
-            df2_verify = load_workbook("BudgetTracker.xlsx", read_only=True)
-            if "Incomes" in df2_verify.sheetnames:
-                pass
-            else:
-                with pd.ExcelWriter("BudgetTracker.xlsx", mode="a", engine="openpyxl") as writer:
-                    df2.to_excel(writer, sheet_name="Incomes")
-        except PermissionError:
-            print("Can't access because Excel file is open.  Please close the file and try again")
-            mainmenu()
+#     # df1 = pd.DataFrame(data=[add_cat])
+#     # df = pd.concat([df, df1], ignore_index=True)
+#     # print(df)
+#     # with pd.ExcelWriter("BudgetTracker.xlsx", mode="a", engine="openpyxl") as writer:
+#     #     add_cat.to_excel(writer, sheet_name="Categories")
+#     # new_cat = pd.concat(([add_cat, df1]), ignore_index=0)
+#     # with pd.ExcelWriter("BudgetTracker.xlsx", mode="a", engine="openpyxl") as writer:
+#     #     new_cat.to_excel(writer, sheet_name="Categories")
 
 
-def create_exp_sheet():
-        try:
-            df3 = pd.DataFrame(            
-                index= [],
-                columns=["Date", "Expense Type", "Expense Amount", "Merchant", "Notes"])
-            df3_verify = load_workbook("BudgetTracker.xlsx", read_only=True)
-            if "Expenses" in df3_verify.sheetnames:
-                pass
-            else:
-                with pd.ExcelWriter("BudgetTracker.xlsx", mode="a", engine="openpyxl") as writer:
-                    df3.to_excel(writer, sheet_name="Expenses")
-        except PermissionError:
-            print("Can't access because Excel file is open.  Please close the file and try again")
-            mainmenu()
+# def create_inc_sheet():
+#         try:
+#             df2 = pd.DataFrame(            
+#                 index=[],
+#                 columns=["Date", "Income type", "Income Amount"])
+#             df2_verify = load_workbook("BudgetTracker.xlsx", read_only=True)
+#             if "Incomes" in df2_verify.sheetnames:
+#                 pass
+#             else:
+#                 with pd.ExcelWriter("BudgetTracker.xlsx", mode="a", engine="openpyxl") as writer:
+#                     df2.to_excel(writer, sheet_name="Incomes")
+#         except PermissionError:
+#             print("Can't access because Excel file is open.  Please close the file and try again")
+#             mainmenu()
+
+
+# def create_exp_sheet():
+#         try:
+#             df3 = pd.DataFrame(            
+#                 index= [],
+#                 columns=["Date", "Expense Type", "Expense Amount", "Merchant", "Notes"])
+#             df3_verify = load_workbook("BudgetTracker.xlsx", read_only=True)
+#             if "Expenses" in df3_verify.sheetnames:
+#                 pass
+#             else:
+#                 with pd.ExcelWriter("BudgetTracker.xlsx", mode="a", engine="openpyxl") as writer:
+#                     df3.to_excel(writer, sheet_name="Expenses")
+#         except PermissionError:
+#             print("Can't access because Excel file is open.  Please close the file and try again")
+#             mainmenu()
 
 
 def mainmenu():
@@ -165,7 +190,7 @@ def mainmenu():
 
 def category_menu():
     create_workbook()
-    set_categories() 
+    # set_categories() 
     cat_option = ""
     while cat_option == "":
         """Print out of navigation menu """
@@ -182,10 +207,12 @@ def category_menu():
         if cat_option.lower() == "q":
             print("Exiting program...")
         elif cat_option == "1":
-            df_category = pd.read_excel("BudgetTracker.xlsx", sheet_name="Categories", index_col=0)
-            if df_category.empty:
-                print("*** No categories have been added yet ***\n")
-                category_menu()
+            stock_categories()
+            
+            # df_category = pd.read_excel("BudgetTracker.xlsx", sheet_name="Categories", index_col=0)
+            # if Workbook.empty:
+                # print("*** No categories have been added yet ***\n")
+            category_menu()
             else:
                 print(df_category)
                 category_menu()
