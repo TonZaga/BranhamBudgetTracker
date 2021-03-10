@@ -78,6 +78,14 @@ def set_categories():
         Budget["A6"] = "Entertainment"
         Budget["A7"] = "Debts"
         Budget["A8"] = "Other"
+    # Create Remaining excel functions
+        Budget["D2"] = "=IF(B2-C2=0, \"\", B2-C2)"
+        Budget["D3"] = "=IF(B3-C3=0, \"\", B3-C3)"
+        Budget["D4"] = "=IF(B4-C4=0, \"\", B4-C4)"
+        Budget["D5"] = "=IF(B5-C5=0, \"\", B5-C5)"
+        Budget["D6"] = "=IF(B6-C6=0, \"\", B6-C6)"
+        Budget["D7"] = "=IF(B7-C7=0, \"\", B7-C7)"
+        Budget["D8"] = "=IF(B8-C8=0, \"\", B8-C8)"
     else:
         pass
     wb.save("BudgetTracker.xlsx")
@@ -89,6 +97,7 @@ def create_income_sheet():
     # Create headers
         Income["A1"] = "SOURCE"
         Income["B1"] = "AMOUNT"
+        Income["D1"] = "TOTAL"
     else:
         pass
     wb.save("BudgetTracker.xlsx")
@@ -248,14 +257,19 @@ def income_menu():
             wb = openpyxl.load_workbook(filename="BudgetTracker.xlsx")
             Income = wb["Income"]
             src_income = input("What is the source of this income? ")
-            income_amount = float(input("Enter income amount: "))
-            Income.append([src_income, income_amount])
-            wb.save("BudgetTracker.xlsx")
-            print("\nCurrent income(s) are:\n")
-            for row_cells in Income.iter_rows(min_row=2, max_col=2):
-                for cell in row_cells:
-                    print(cell.value)
-            income_menu()
+            try:
+                income_amount = float(input("Enter income amount: "))
+            except ValueError:
+                print("Not a valid amount")
+                income_menu()
+            else:
+                Income.append([src_income, income_amount])
+                wb.save("BudgetTracker.xlsx")
+                print("\nCurrent income(s) are:\n")
+                for row_cells in Income.iter_rows(min_row=2, max_col=2):
+                    for cell in row_cells:
+                        print(cell.value)
+                income_menu()
         # elif inc_option == "3":
         #     Edit an existing income (index #?)
         elif inc_option == "4":
