@@ -3,7 +3,7 @@ Branham Budget Tracker
 
 created by: Anthony Branham
 created on: 2/19/2021
-last updated on: 3/8/2021
+last updated on: 3/10/2021
 
 """
 import datetime
@@ -58,49 +58,59 @@ def create_workbook():
             wb.save(filename="BudgetTracker.xlsx")
         else:
             pass
+create_workbook()
 
 
 def set_categories():
     wb = openpyxl.load_workbook(filename="BudgetTracker.xlsx")
     Budget = wb["Budget"]
+    if Budget["A1"].value is None:
     # Create headers
-    Budget["A1"] = "CATEGORY"
-    Budget["B1"] = "PLANNED"
-    Budget["C1"] = "SPENT"
-    Budget["D1"] = "REMAINING"
+        Budget["A1"] = "CATEGORY"
+        Budget["B1"] = "PLANNED"
+        Budget["C1"] = "SPENT"
+        Budget["D1"] = "REMAINING"
     # Create first column
-    Budget["A2"] = "Housing"
-    Budget["A3"] = "Utilities"
-    Budget["A4"] = "Transportation"
-    Budget["A5"] = "Groceries"
-    Budget["A6"] = "Entertainment"
-    Budget["A7"] = "Debts"
-    Budget["A8"] = "Other"
+        Budget["A2"] = "Housing"
+        Budget["A3"] = "Utilities"
+        Budget["A4"] = "Transportation"
+        Budget["A5"] = "Groceries"
+        Budget["A6"] = "Entertainment"
+        Budget["A7"] = "Debts"
+        Budget["A8"] = "Other"
+    else:
+        pass
     wb.save("BudgetTracker.xlsx")
 
 def create_income_sheet():
     wb = openpyxl.load_workbook(filename="BudgetTracker.xlsx")
     Income = wb["Income"]
+    if Income["A1"].value is None:
     # Create headers
-    Income["A1"] = "SOURCE"
-    Income["B1"] = "AMOUNT"
+        Income["A1"] = "SOURCE"
+        Income["B1"] = "AMOUNT"
+    else:
+        pass
     wb.save("BudgetTracker.xlsx")
 
 def create_expense_sheet():
     wb = openpyxl.load_workbook(filename="BudgetTracker.xlsx")
     Expenses = wb["Expenses"]
+    if Expenses["A1"].value is None:
     # Create headers
-    Expenses["A1"] = "DATE"
-    Expenses["B1"] = "AMOUNT"
-    Expenses["C1"] = "MERCHANT"
-    Expenses["D1"] = "CATEGORY"
+        Expenses["A1"] = "DATE"
+        Expenses["B1"] = "AMOUNT"
+        Expenses["C1"] = "MERCHANT"
+        Expenses["D1"] = "CATEGORY"
+    else:
+        pass
     wb.save("BudgetTracker.xlsx")
 
 
 def set_budget():
     # Prompt user to select a category and set budget amount
     wb = openpyxl.load_workbook(filename="BudgetTracker.xlsx")
-    Budget = wb.active
+    Budget = wb["Budget"]
     user_cat = input("What category would you like to set a budget for? ").upper()
     budget_amount = float(input("Enter budget amount: "))
     if user_cat == "HOUSING":
@@ -160,7 +170,6 @@ def mainmenu():
 
 
 def category_menu():
-    create_workbook()
     set_categories() 
     cat_option = ""
     while cat_option == "":
@@ -178,19 +187,25 @@ def category_menu():
             print("Exiting program...")
         elif cat_option == "1":
             wb = openpyxl.load_workbook("BudgetTracker.xlsx")
-            Budget = wb.active
-            cats = (Budget["A2":"A8"])
-            print("\nCategories are:\n")
-            for i in range(2, Budget.max_row+1):
-                print(Budget.cell(row=i, column=1).value)
+            Budget = wb["Budget"]
+            print("\nCategories and their budgets are:\n")
+            for row_cells in Budget.iter_rows(min_row=2, max_col=2):
+                for cell in row_cells:
+                    if cell.value == None:
+                        print("Not set")
+                    else:
+                        print(cell.value) 
             category_menu()
         elif cat_option == "2":
             wb = openpyxl.load_workbook("BudgetTracker.xlsx")
-            Budget = wb.active
-            cats = (Budget["A2":"A8"])
-            print("\nCategories are:\n")
-            for i in range(2, Budget.max_row+1):
-                print(Budget.cell(row=i, column=1).value)
+            Budget = wb["Budget"]
+            print("\nCategories and their budgets are:\n")
+            for row_cells in Budget.iter_rows(min_row=2, max_col=2):
+                for cell in row_cells:
+                    if cell.value == None:
+                        print("Not set")
+                    else:
+                        print(cell.value)
             set_budget()
             category_menu()
         elif cat_option == "3":
@@ -224,21 +239,30 @@ def income_menu():
                 print("*** No incomes have been added yet ***\n")
                 income_menu()
             else:
-                income_list = []
-                print("\nIncomes are:\n")
-                for i in income_list:
-                    print(i)
+                print("\nCurrent Income(s) are:\n")
+                for row_cells in Income.iter_rows(min_row=2, max_col=2):
+                    for cell in row_cells:
+                        print(cell.value)
                 income_menu()
-        # elif inc_option == "2":
-        #     Enter new income(s)
+        elif inc_option == "2":
+            wb = openpyxl.load_workbook(filename="BudgetTracker.xlsx")
+            Income = wb["Income"]
+            src_income = input("What is the source of this income? ")
+            income_amount = float(input("Enter income amount: "))
+            Income.append([src_income, income_amount])
+            wb.save("BudgetTracker.xlsx")
+            print("\nCurrent income(s) are:\n")
+            for row_cells in Income.iter_rows(min_row=2, max_col=2):
+                for cell in row_cells:
+                    print(cell.value)
+            income_menu()
         # elif inc_option == "3":
         #     Edit an existing income (index #?)
-
-        # elif inc_option == "4":
-        #     mainmenu()
-        # else:
-        #     print("Invalid menu option.  Please try again")
-        #     income_menu()
+        elif inc_option == "4":
+            mainmenu()
+        else:
+            print("Invalid menu option.  Please try again")
+            income_menu()
 
 
 def expenses_menu():
@@ -265,19 +289,30 @@ def expenses_menu():
                 print("*** No expenses have been added yet ***\n")
                 expenses_menu()
             else:
-                expenses_list = []
-                print("\nExpenses are:\n")
-                for i in expenses_list:
-                    print(i)
+                for row_cells in Expenses.iter_rows(min_row=2, max_col=4):
+                    for cell in row_cells:
+                        print(cell.value)
                 expenses_menu()
-#         # elif exp_option == "2":
+        elif exp_option == "2":
+            wb = openpyxl.load_workbook(filename="BudgetTracker.xlsx")
+            Expenses = wb["Expenses"]
+            expense_date = datetime.datetime.strptime(input("What is the date of this expense? (MM/DD/YYYY format) "), "%m/%d/%Y")
+            print(expense_date.strftime("%m/%d/%Y"))
+            expense_amount = float(input("Enter expense amount: "))
+            merch_expense = input("What is the merchant of this expense? ")
+            expense_cat = input("What is the category for this expense? ")
+            Expenses.append([expense_date.strftime("%m/%d/%Y"), expense_amount, merch_expense, expense_cat])
+            wb.save("BudgetTracker.xlsx")
+            for row_cells in Expenses.iter_rows(min_row=2, max_col=4):
+                    for cell in row_cells:
+                        print(cell.value)
 #             # Enter new expense(s)
 #         # elif exp_option == "3":
 #             # Editing existing expense (index #?)
-#         elif exp_option == "4":
-#             mainmenu()
-#         else:
-#             print("Invalid menu option.  Please try again")
-#             expenses_menu()
+        elif exp_option == "4":
+            mainmenu()
+        else:
+            print("Invalid menu option.  Please try again")
+            expenses_menu()
 
 mainmenu()
