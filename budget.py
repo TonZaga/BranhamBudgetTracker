@@ -61,6 +61,11 @@ def create_workbook():
 create_workbook()
 
 
+def delete_workbook():
+    if os.path.exists("BudgetTracker.xlsx"):
+        os.remove("BudgetTracker.xlsx")
+    
+
 def set_categories():
     wb = openpyxl.load_workbook(filename="BudgetTracker.xlsx")
     Budget = wb["Budget"]
@@ -159,6 +164,7 @@ def mainmenu():
         print("2. Income menu")
         print("3. Expenses menu")
         print("4. Generate breakdown")
+        print("5. Clear data/Begin new budget")
         print("q. Quit")
         print(30 * '-')
         option = input("Enter an option: ")
@@ -174,6 +180,20 @@ def mainmenu():
         # elif option == "4":
         #     print("Generating breakdown")
         #     # Add table for calculations between income/expense w/ exception #
+        elif option == "5":
+            reset_verify = input("Are you sure you want to reset your budget? Y/N ").upper()
+            if reset_verify == "Y":
+                reset_verify2 = input("**You will not be able to recover lost data after this point.\n Are you sure you wish to continue?** Y/N ")
+                if reset_verify2 == "Y":
+                    delete_workbook()
+                    print("All data has been reset")
+                    create_workbook()
+                    set_categories()
+            elif reset_verify == "N":
+                mainmenu()
+            else:
+                print("Not a valid option.  Please try again.")
+                mainmenu()
         else:
             print("Invalid option.  Please try again")
 
@@ -234,7 +254,7 @@ def income_menu():
         print(30 * '-')
         print("1. Show Income(s)")
         print("2. Enter new income")
-        print("3. Edit existing income")
+        print("3. Delete an income")
         print("4. return to Main menu")
         print("q. Quit")
         print(30 * '-')
@@ -256,7 +276,15 @@ def income_menu():
         elif inc_option == "2":
             wb = openpyxl.load_workbook(filename="BudgetTracker.xlsx")
             Income = wb["Income"]
+            print("\nCurrent Income(s) are:\n")
+            for row_cells in Income.iter_rows(min_row=2, max_col=2):
+                for cell in row_cells:
+                    print(cell.value)
             src_income = input("What is the source of this income? ")
+            # if src_income in Income:
+            #     print("Already listed as a source")
+            #     income_menu()
+            # else:
             try:
                 income_amount = float(input("Enter income amount: "))
             except ValueError:
