@@ -95,6 +95,7 @@ def set_categories():
         pass
     wb.save("BudgetTracker.xlsx")
 
+
 def create_income_sheet():
     wb = openpyxl.load_workbook(filename="BudgetTracker.xlsx")
     Income = wb["Income"]
@@ -106,6 +107,7 @@ def create_income_sheet():
     else:
         pass
     wb.save("BudgetTracker.xlsx")
+
 
 def create_expense_sheet():
     wb = openpyxl.load_workbook(filename="BudgetTracker.xlsx")
@@ -125,27 +127,27 @@ def set_budget():
     # Prompt user to select a category and set budget amount
     wb = openpyxl.load_workbook(filename="BudgetTracker.xlsx")
     Budget = wb["Budget"]
-    user_cat = input("What category would you like to set a budget for? ").upper()
+    user_cat = input("1. Housing\n2. Utilities\n3. Transporation\n4. Groceries\n5. Entertainment\n6. Debts\n7. Other\nWhat category would you like to set a budget for? Enter 1-7: ").upper()
     budget_amount = float(input("Enter budget amount: "))
-    if user_cat == "HOUSING":
+    if user_cat == "1":
         Budget["B2"] = budget_amount
         print("Budget for HOUSING has been set to ${}.".format(budget_amount))
-    elif user_cat == "UTILITIES":
+    elif user_cat == "2":
         Budget["B3"] = budget_amount
         print("Budget for UTILITIES has been set to ${}.".format(budget_amount))
-    elif user_cat == "TRANSPORTATION":
+    elif user_cat == "3":
         Budget["B4"] = budget_amount
         print("Budget for TRANSPORTATION has been set to ${}.".format(budget_amount))
-    elif user_cat == "GROCERIES":
+    elif user_cat == "4":
         Budget["B5"] = budget_amount
         print("Budget for GROCERIES has been set to ${}.".format(budget_amount))
-    elif user_cat == "ENTERTAINMENT":
+    elif user_cat == "5":
         Budget["B6"] = budget_amount
         print("Budget for ENTERTAINMENT has been set to ${}.".format(budget_amount))
-    elif user_cat == "DEBTS":
+    elif user_cat == "6":
         Budget["B7"] = budget_amount
         print("Budget for DEBTS has been set to ${}.".format(budget_amount))
-    elif user_cat == "OTHER":
+    elif user_cat == "7":
         Budget["B8"] = budget_amount
         print("Budget for OTHER has been set to ${}.".format(budget_amount))
     else:
@@ -183,7 +185,7 @@ def mainmenu():
         elif option == "5":
             reset_verify = input("Are you sure you want to reset your budget? Y/N ").upper()
             if reset_verify == "Y":
-                reset_verify2 = input("**You will not be able to recover lost data after this point.\n Are you sure you wish to continue?** Y/N ")
+                reset_verify2 = input("**You will not be able to recover lost data after this point.**\n**Are you sure you wish to continue?** Y/N ")
                 if reset_verify2 == "Y":
                     delete_workbook()
                     print("All data has been reset")
@@ -228,13 +230,7 @@ def category_menu():
         elif cat_option == "2":
             wb = openpyxl.load_workbook("BudgetTracker.xlsx")
             Budget = wb["Budget"]
-            print("\nCategories and their budgets are:\n")
-            for row_cells in Budget.iter_rows(min_row=2, max_col=2):
-                for cell in row_cells:
-                    if cell.value == None:
-                        print("Not set")
-                    else:
-                        print(cell.value)
+            print("\nCategories are:\n")
             set_budget()
             category_menu()
         elif cat_option == "3":
