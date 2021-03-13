@@ -9,8 +9,12 @@ last updated on: 3/11/2021
 import datetime
 import openpyxl
 import os.path
+import os
 import pyfiglet
 from calendar import monthrange
+
+clear = lambda: os.system('cls')
+
 
 
 def print_banner():
@@ -256,41 +260,59 @@ def income_menu():
         print("q. Quit")
         print(30 * '-')
         inc_option = input("Enter an option: ")
+
+        incomes= []
+        values = []
+
+        # Open workbook
+        wb = openpyxl.load_workbook("BudgetTracker.xlsx")
+        Income = wb["Income"]
+
+        # This builds our arrays
+        for row_cells in Income.iter_rows(min_row=2, max_col=2):
+            for cell in row_cells:
+                if type(cell.value) == str:
+                    incomes.append(cell.value.lower())
+                else:
+                    values.append(cell.value)
+
+        def display_incomes():
+            print("\nCurrent Income(s) are:\n")
+            for i in range(len(incomes)):
+                print(incomes[i].ljust(15," ") + str(values[i]))
+        
         if inc_option.lower() == "q":
             print("Exiting program...")
         elif inc_option == "1":
-            wb = openpyxl.load_workbook("BudgetTracker.xlsx")
-            Income = wb["Income"]
-            if Income["A2"].value is None:
+            if len(incomes) == 0:
+                clear()
                 print("*** No incomes have been added yet ***\n")
                 income_menu()
             else:
-                print("\nCurrent Income(s) are:\n")
-                for row_cells in Income.iter_rows(min_row=2, max_col=2):
-                    for cell in row_cells:
-                        print(cell.value)
+                clear()
+                display_incomes()
                 income_menu()
+
+
         elif inc_option == "2":
-            wb = openpyxl.load_workbook(filename="BudgetTracker.xlsx")
-            Income = wb["Income"]
-            print("\nCurrent Income(s) are:\n")
-            for row_cells in Income.iter_rows(min_row=2, max_col=2):
-                for cell in row_cells:
-                    print(cell.value)
+            display_incomes()
             src_income = input("What is the source of this income? ")
-            try:
-                income_amount = float(input("Enter income amount: "))
-            except ValueError:
-                print("Not a valid amount")
+            if src_income.lower() in incomes:
+                print("Source already exists")
                 income_menu()
             else:
+                try:
+                    income_amount = float(input("Enter income amount: "))
+                except ValueError:
+                    print("Not a valid amount")
+                    income_menu()
                 Income.append([src_income, income_amount])
+
                 wb.save("BudgetTracker.xlsx")
                 print("\nCurrent income(s) are:\n")
-                for row_cells in Income.iter_rows(min_row=2, max_col=2):
-                    for cell in row_cells:
-                        print(cell.value)
+                display_incomes()
                 income_menu()
+
         # elif inc_option == "3":
         #     Edit an existing income (index #?)
         # elif inc_option == "4":
