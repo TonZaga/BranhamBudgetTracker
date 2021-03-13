@@ -3,7 +3,7 @@ Branham Budget Tracker
 
 created by: Anthony Branham
 created on: 2/19/2021
-last updated on: 3/10/2021
+last updated on: 3/11/2021
 
 """
 import datetime
@@ -24,7 +24,7 @@ def get_name():
     # Get user's name and generate welcome message
     prompt_name = input("Please enter your first name: ")
     first_name = str(prompt_name).upper()
-    print("\n\n\nWelcome to BBT, {}!\n".format(first_name))
+    print("\n\nWelcome to BBT, {}!\n".format(first_name))
 get_name()
 
 
@@ -250,8 +250,9 @@ def income_menu():
         print(30 * '-')
         print("1. Show Income(s)")
         print("2. Enter new income")
-        print("3. Delete an income")
-        print("4. return to Main menu")
+        print("3. Modify an income")
+        print("4. Delete an income")
+        print("5. return to Main menu")
         print("q. Quit")
         print(30 * '-')
         inc_option = input("Enter an option: ")
@@ -277,10 +278,6 @@ def income_menu():
                 for cell in row_cells:
                     print(cell.value)
             src_income = input("What is the source of this income? ")
-            # if src_income in Income:
-            #     print("Already listed as a source")
-            #     income_menu()
-            # else:
             try:
                 income_amount = float(input("Enter income amount: "))
             except ValueError:
@@ -296,7 +293,9 @@ def income_menu():
                 income_menu()
         # elif inc_option == "3":
         #     Edit an existing income (index #?)
-        elif inc_option == "4":
+        # elif inc_option == "4":
+        #     Delete an existing income (index #?)
+        elif inc_option == "5":
             mainmenu()
         else:
             print("Invalid menu option.  Please try again")
@@ -313,8 +312,9 @@ def expenses_menu():
         print(30 * '-')
         print("1. Show expense(s)")
         print("2. Enter new expense")
-        print("3. Edit existing expense")
-        print("4. return to Main menu")
+        print("3. Modify an expense")
+        print("4. Delete an expense")
+        print("5. return to Main menu")
         print("q. Quit")
         print(30 * '-')
         exp_option = input("Enter an option: ")
@@ -344,10 +344,11 @@ def expenses_menu():
             for row_cells in Expenses.iter_rows(min_row=2, max_col=4):
                     for cell in row_cells:
                         print(cell.value)
-#             # Enter new expense(s)
-#         # elif exp_option == "3":
-#             # Editing existing expense (index #?)
-        elif exp_option == "4":
+            # elif exp_option == "3":
+                # Modify an expense (index #?)
+            # elif exp_option == "4":
+                # Delete an expense (index #?)
+        elif exp_option == "5":
             mainmenu()
         else:
             print("Invalid menu option.  Please try again")
