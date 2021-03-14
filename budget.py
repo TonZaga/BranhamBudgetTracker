@@ -16,7 +16,6 @@ from calendar import monthrange
 clear = lambda: os.system('cls')
 
 
-
 def print_banner():
     # Print Banner
     ascii_banner = pyfiglet.figlet_format("Branham Budget Tracker")
@@ -134,25 +133,25 @@ def set_budget():
     user_cat = input("1. Housing\n2. Utilities\n3. Transporation\n4. Groceries\n5. Entertainment\n6. Debts\n7. Other\nWhat category would you like to set a budget for? Enter 1-7: ").upper()
     budget_amount = float(input("Enter budget amount: "))
     if user_cat == "1":
-        Budget["B2"] = budget_amount
+        Budget["B2"] = float(budget_amount)
         print("Budget for HOUSING has been set to ${}.".format(budget_amount))
     elif user_cat == "2":
-        Budget["B3"] = budget_amount
+        Budget["B3"] = float(budget_amount)
         print("Budget for UTILITIES has been set to ${}.".format(budget_amount))
     elif user_cat == "3":
-        Budget["B4"] = budget_amount
+        Budget["B4"] = float(budget_amount)
         print("Budget for TRANSPORTATION has been set to ${}.".format(budget_amount))
     elif user_cat == "4":
-        Budget["B5"] = budget_amount
+        Budget["B5"] = float(budget_amount)
         print("Budget for GROCERIES has been set to ${}.".format(budget_amount))
     elif user_cat == "5":
-        Budget["B6"] = budget_amount
+        Budget["B6"] = float(budget_amount)
         print("Budget for ENTERTAINMENT has been set to ${}.".format(budget_amount))
     elif user_cat == "6":
-        Budget["B7"] = budget_amount
+        Budget["B7"] = float(budget_amount)
         print("Budget for DEBTS has been set to ${}.".format(budget_amount))
     elif user_cat == "7":
-        Budget["B8"] = budget_amount
+        Budget["B8"] = float(budget_amount)
         print("Budget for OTHER has been set to ${}.".format(budget_amount))
     else:
         print("Invalid category selection")
@@ -174,6 +173,7 @@ def mainmenu():
         print("q. Quit")
         print(30 * '-')
         option = input("Enter an option: ")
+        clear()
         if option.lower() == 'q':
             print("Exiting program...")
             exit()
@@ -203,7 +203,7 @@ def mainmenu():
         else:
             print("Invalid option.  Please try again")
 
-
+# Sub menu for categories
 def category_menu():
     set_categories() 
     cat_option = ""
@@ -218,8 +218,11 @@ def category_menu():
         print("q. Quit")
         print(30 * '-')
         cat_option = input("Enter an option: ")
+        clear()
         if cat_option.lower() == "q":
             print("Exiting program...")
+
+        # Displays categories and set budgets
         elif cat_option == "1":
             wb = openpyxl.load_workbook("BudgetTracker.xlsx")
             Budget = wb["Budget"]
@@ -231,19 +234,23 @@ def category_menu():
                     else:
                         print(cell.value) 
             category_menu()
+
+        # Set budget for a category
         elif cat_option == "2":
             wb = openpyxl.load_workbook("BudgetTracker.xlsx")
             Budget = wb["Budget"]
             print("\nCategories are:\n")
             set_budget()
             category_menu()
+
+        # Return to main menu
         elif cat_option == "3":
             mainmenu()
         else:
             print("Invalid menu option.  Please try again")
             category_menu()
             
-            
+# Sub menu for income
 def income_menu():
     create_income_sheet()
     inc_option = ""
@@ -260,12 +267,13 @@ def income_menu():
         print("q. Quit")
         print(30 * '-')
         inc_option = input("Enter an option: ")
+        clear()
 
         incomes= []
         values = []
 
         # Open workbook
-        wb = openpyxl.load_workbook("BudgetTracker.xlsx")
+        wb = openpyxl.load_workbook(filename="BudgetTracker.xlsx")
         Income = wb["Income"]
 
         # This builds our arrays
@@ -274,15 +282,19 @@ def income_menu():
                 if type(cell.value) == str:
                     incomes.append(cell.value.lower())
                 else:
-                    values.append(cell.value)
+                    values.append(float(cell.value))
 
+        # Display current incomes
         def display_incomes():
             print("\nCurrent Income(s) are:\n")
             for i in range(len(incomes)):
-                print(incomes[i].ljust(15," ") + str(values[i]))
+                print(str(i+1) + "." + " " + incomes[i].ljust(15," ") + str(values[i]))
         
+        # Quit out of program
         if inc_option.lower() == "q":
             print("Exiting program...")
+
+        # Show current incomes
         elif inc_option == "1":
             if len(incomes) == 0:
                 clear()
@@ -293,7 +305,7 @@ def income_menu():
                 display_incomes()
                 income_menu()
 
-
+        # Enter a new income entry
         elif inc_option == "2":
             display_incomes()
             src_income = input("What is the source of this income? ")
@@ -307,23 +319,54 @@ def income_menu():
                     print("Not a valid amount")
                     income_menu()
                 Income.append([src_income, income_amount])
-
+                incomes.append(src_income)
+                values.append(income_amount)
                 wb.save("BudgetTracker.xlsx")
                 print("\nCurrent income(s) are:\n")
                 display_incomes()
                 income_menu()
 
-        # elif inc_option == "3":
-        #     Edit an existing income (index #?)
-        # elif inc_option == "4":
-        #     Delete an existing income (index #?)
+        # Modify an income entry
+        elif inc_option == "3":
+            display_incomes()
+            # Prompts for new name or use existing
+            modify_income = int(input("What income would you like to edit? Enter # or 0 to return: ") or 0)
+            if modify_income == 0:
+                income_menu()
+            new_name = str(input("New name for " + str(incomes[modify_income - 1]) + "? ") or "nothing")
+            if new_name != "nothing":
+                incomes[modify_income - 1] = new_name
+                Income["A" + str(modify_income + 1)] = new_name
+            # Prompts for new amount
+            new_amount = int(input("New amount? ") or 0)
+            if new_amount != 0:
+                values[modify_income - 1] = new_amount
+                Income["B" + str(modify_income + 1)] = float(new_amount)
+            else:
+                print("Amount unchanged")
+
+            wb.save("BudgetTracker.xlsx")
+            income_menu()
+
+        # Delete an income entry
+        elif inc_option == "4":
+            display_incomes()
+            delete_income = int(input("What income would you like to remove? Enter # or 0 to return ") or 0)
+            if delete_income == 0:
+                income_menu()
+            incomes.pop(delete_income - 1)
+            Income.delete_rows(delete_income + 1)
+            wb.save("BudgetTracker.xlsx")
+            income_menu()
+
+        # Return to main menu
         elif inc_option == "5":
             mainmenu()
         else:
             print("Invalid menu option.  Please try again")
             income_menu()
 
-
+# Sub menu for expenses
 def expenses_menu():
     create_expense_sheet()
     exp_option = ""
@@ -340,40 +383,133 @@ def expenses_menu():
         print("q. Quit")
         print(30 * '-')
         exp_option = input("Enter an option: ")
+        clear()
+        
+        exp_date = []
+        exp_amount = []
+        exp_merchant = []
+        exp_category = []
+
+
+        # Open workbook
+        wb = openpyxl.load_workbook(filename="BudgetTracker.xlsx")
+        Expenses = wb["Expenses"]
+
+        # This builds our arrays
+        for cell in Expenses["A"]:
+            exp_date.append(cell.value)
+        
+        for cell in Expenses["B"]:
+            exp_amount.append(cell.value)
+        
+        for cell in Expenses["C"]:
+            exp_merchant.append(cell.value)
+
+        for cell in Expenses["D"]:
+            exp_category.append(cell.value)
+
+        # Remove Excel headers from arrays
+        exp_date.pop(0)
+        exp_amount.pop(0)
+        exp_merchant.pop(0)
+        exp_category.pop(0)
+
+        print(exp_date)
+        print(exp_amount)
+        print(exp_merchant)
+        print(exp_category)
+
+
+        # Display current expenses
+        def display_expenses():
+            print("\nCurrent Expense(s) are:\n")
+            for i in range(len(exp_date)):
+                print(str(str(i+1) + ".").ljust(5," ") +
+                str(exp_date[i].strftime('%m/%d/%Y')).ljust(15," ") +
+                str(exp_amount[i]).ljust(15," ") +
+                str(exp_merchant[i]).ljust(15," ") +
+                str(exp_category[i]).ljust(15," "))
+        
         if exp_option.lower() == "q":
             print("Exiting program...")
+
+        # Shows expenses if any entered
         elif exp_option == "1":
-            wb = openpyxl.load_workbook("BudgetTracker.xlsx")
-            Expenses = wb["Expenses"]
-            if Expenses["A2"].value is None:
+            if len(exp_date) == 0:
+                clear()
                 print("*** No expenses have been added yet ***\n")
                 expenses_menu()
             else:
-                for row_cells in Expenses.iter_rows(min_row=2, max_col=4):
-                    for cell in row_cells:
-                        print(cell.value)
+                clear()
+                display_expenses()
                 expenses_menu()
+
+        # Enter a new expense
         elif exp_option == "2":
-            wb = openpyxl.load_workbook(filename="BudgetTracker.xlsx")
-            Expenses = wb["Expenses"]
-            expense_date = datetime.datetime.strptime(input("What is the date of this expense? (MM/DD/YYYY format) "), "%m/%d/%Y")
-            print(expense_date.strftime("%m/%d/%Y"))
+            display_expenses()
+                try:
+                    expense_date = datetime.datetime.strptime(input("What is the date of this expense? (MM/DD/YYYY format) "), "%m/%d/%Y")
+                except ValueError:
+                    print("Not a valid date format. Please try again.")
+                    income_menu()
+            expense_date = expense_date.strftime("%m/%d/%Y")
+            print(expense_date)
             expense_amount = float(input("Enter expense amount: "))
             merch_expense = input("What is the merchant of this expense? ")
             expense_cat = input("What is the category for this expense? ")
-            Expenses.append([expense_date.strftime("%m/%d/%Y"), expense_amount, merch_expense, expense_cat])
+            Expenses.append([exp_date, exp_amount, exp_merchant, exp_category])
             wb.save("BudgetTracker.xlsx")
-            for row_cells in Expenses.iter_rows(min_row=2, max_col=4):
-                    for cell in row_cells:
-                        print(cell.value)
-            # elif exp_option == "3":
-                # Modify an expense (index #?)
+
+            # src_income = input("What is the source of this income? ")
+            # if src_income.lower() in incomes:
+            #     print("Source already exists")
+            #     income_menu()
+            # else:
+            #     try:
+            #         income_amount = float(input("Enter income amount: "))
+            #     except ValueError:
+            #         print("Not a valid amount")
+            #         income_menu()
+            #     Income.append([src_income, income_amount])
+            #     incomes.append(src_income)
+            #     values.append(income_amount)
+            #     wb.save("BudgetTracker.xlsx")
+            #     print("\nCurrent income(s) are:\n")
+            #     display_incomes()
+            #     income_menu()
+
+            # elif inc_option == "3":
+            #     display_incomes()
+            #     # Prompts for new name or use existing
+            #     modify_income = int(input("What income would you like to edit? Enter # "))
+            #     new_name = str(input("New name for " + str(incomes[modify_income - 1]) + "? ") or "nothing")
+            #     if new_name != "nothing":
+            #         incomes[modify_income - 1] = new_name
+            #         Income["A" + str(modify_income + 1)] = new_name
+            #     # Prompts for new amount
+            #     new_amount = int(input("New amount? ") or 0)
+            #     if new_amount != 0:
+            #         values[modify_income - 1] = new_amount
+            #         Income["B" + str(modify_income + 1)] = float(new_amount)
+            #     else:
+            #         print("Amount unchanged")
+
+            #     wb.save("BudgetTracker.xlsx")
+            #     income_menu()
+
             # elif exp_option == "4":
-                # Delete an expense (index #?)
-        elif exp_option == "5":
-            mainmenu()
-        else:
-            print("Invalid menu option.  Please try again")
-            expenses_menu()
+            #     display_expenses()
+            #     delete_income = int(input("What income would you like to remove? Enter # or 0 to return ") or 0)
+            #     if delete_income == 0:
+            #         income_menu()
+            #     expenses.pop(delete_income - 1)
+            #     Expenses.delete_rows(delete_income + 1)
+            #     wb.save("BudgetTracker.xlsx")
+            #     # Delete an income
+            # elif exp_option == "5":
+            #     mainmenu()
+            # else:
+            #     print("Invalid menu option.  Please try again")
+            #     income_menu()
 
 mainmenu()
