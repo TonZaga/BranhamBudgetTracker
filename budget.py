@@ -117,10 +117,9 @@ def create_expense_sheet():
     Expenses = wb["Expenses"]
     if Expenses["A1"].value is None:
     # Create headers
-        Expenses["A1"] = "DATE"
-        Expenses["B1"] = "AMOUNT"
-        Expenses["C1"] = "MERCHANT"
-        Expenses["D1"] = "CATEGORY"
+        Expenses["A1"] = "AMOUNT"
+        Expenses["B1"] = "MERCHANT"
+        Expenses["C1"] = "CATEGORY"
     else:
         pass
     wb.save("BudgetTracker.xlsx")
@@ -322,7 +321,6 @@ def income_menu():
                 incomes.append(src_income)
                 values.append(income_amount)
                 wb.save("BudgetTracker.xlsx")
-                print("\nCurrent income(s) are:\n")
                 display_incomes()
                 income_menu()
 
@@ -385,7 +383,6 @@ def expenses_menu():
         exp_option = input("Enter an option: ")
         clear()
         
-        exp_date = []
         exp_amount = []
         exp_merchant = []
         exp_category = []
@@ -397,35 +394,26 @@ def expenses_menu():
 
         # This builds our arrays
         for cell in Expenses["A"]:
-            exp_date.append(cell.value)
-        
-        for cell in Expenses["B"]:
             exp_amount.append(cell.value)
         
-        for cell in Expenses["C"]:
+        for cell in Expenses["B"]:
             exp_merchant.append(cell.value)
-
-        for cell in Expenses["D"]:
+        
+        for cell in Expenses["C"]:
             exp_category.append(cell.value)
 
+
         # Remove Excel headers from arrays
-        exp_date.pop(0)
         exp_amount.pop(0)
         exp_merchant.pop(0)
         exp_category.pop(0)
-
-        print(exp_date)
-        print(exp_amount)
-        print(exp_merchant)
-        print(exp_category)
 
 
         # Display current expenses
         def display_expenses():
             print("\nCurrent Expense(s) are:\n")
-            for i in range(len(exp_date)):
-                print(str(str(i+1) + ".").ljust(5," ") +
-                str(exp_date[i].strftime('%m/%d/%Y')).ljust(15," ") +
+            for i in range(len(exp_amount)):
+                print (str(str(i+1) + ".").ljust(5," ") +
                 str(exp_amount[i]).ljust(15," ") +
                 str(exp_merchant[i]).ljust(15," ") +
                 str(exp_category[i]).ljust(15," "))
@@ -435,7 +423,7 @@ def expenses_menu():
 
         # Shows expenses if any entered
         elif exp_option == "1":
-            if len(exp_date) == 0:
+            if len(exp_amount) == 0:
                 clear()
                 print("*** No expenses have been added yet ***\n")
                 expenses_menu()
@@ -447,36 +435,21 @@ def expenses_menu():
         # Enter a new expense
         elif exp_option == "2":
             display_expenses()
-                try:
-                    expense_date = datetime.datetime.strptime(input("What is the date of this expense? (MM/DD/YYYY format) "), "%m/%d/%Y")
-                except ValueError:
-                    print("Not a valid date format. Please try again.")
-                    income_menu()
-            expense_date = expense_date.strftime("%m/%d/%Y")
-            print(expense_date)
-            expense_amount = float(input("Enter expense amount: "))
+            try:
+                expense_amount = float(input("Enter expense amount: "))
+            except ValueError:
+                print("Not a valid amount.  Please try again")
+                expenses_menu()
             merch_expense = input("What is the merchant of this expense? ")
             expense_cat = input("What is the category for this expense? ")
-            Expenses.append([exp_date, exp_amount, exp_merchant, exp_category])
+            Expenses.append([expense_amount, merch_expense, expense_cat])
+            exp_amount.append(expense_amount)
+            exp_merchant.append(merch_expense)
+            exp_category.append(expense_cat)
             wb.save("BudgetTracker.xlsx")
+            display_expenses()
+            expenses_menu()
 
-            # src_income = input("What is the source of this income? ")
-            # if src_income.lower() in incomes:
-            #     print("Source already exists")
-            #     income_menu()
-            # else:
-            #     try:
-            #         income_amount = float(input("Enter income amount: "))
-            #     except ValueError:
-            #         print("Not a valid amount")
-            #         income_menu()
-            #     Income.append([src_income, income_amount])
-            #     incomes.append(src_income)
-            #     values.append(income_amount)
-            #     wb.save("BudgetTracker.xlsx")
-            #     print("\nCurrent income(s) are:\n")
-            #     display_incomes()
-            #     income_menu()
 
             # elif inc_option == "3":
             #     display_incomes()
