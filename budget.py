@@ -3,7 +3,7 @@ Branham Budget Tracker
 
 created by: Anthony Branham
 created on: 2/19/2021
-last updated on: 3/11/2021
+last updated on: 3/15/2021
 
 """
 import datetime
@@ -27,7 +27,7 @@ def get_name():
     # Get user's name and generate welcome message
     prompt_name = input("Please enter your first name: ")
     first_name = str(prompt_name).upper()
-    print("\n\nWelcome to BBT, {}!\n".format(first_name))
+    print("\n\nWelcome to Branham Budget Tracker, {}!\n".format(first_name))
 get_name()
 
 
@@ -318,9 +318,10 @@ def income_menu():
         
         # Total all incomes
         def total_income():
-            for i in range(len(incomes)):
-                total = sum(values)
-                Income["D2"] = total
+            total = sum(values)
+            print(total)
+            Income["D2"] = total
+            wb.save(filename="BudgetTracker.xlsx")
 
         # Quit out of program
         if inc_option.lower() == "q":
@@ -354,9 +355,9 @@ def income_menu():
                 Income.append([src_income, income_amount])
                 incomes.append(src_income)
                 values.append(income_amount)
+                total_income()
                 wb.save("BudgetTracker.xlsx")
                 display_incomes()
-                total_income()
                 income_menu()
 
         # Modify an income entry
@@ -390,6 +391,7 @@ def income_menu():
             incomes.pop(delete_income - 1)
             Income.delete_rows(delete_income + 1)
             total_income()
+            display_incomes()
             wb.save("BudgetTracker.xlsx")
             income_menu()
 
