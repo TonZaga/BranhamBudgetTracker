@@ -61,76 +61,78 @@ def create_workbook():
             wb.save(filename="BudgetTracker.xlsx")
         else:
             pass
+
+        # Configure Budget worksheet
+        wb = openpyxl.load_workbook(filename="BudgetTracker.xlsx")
+        Budget = wb["Budget"]
+        if Budget["A1"].value is None:
+            # Create headers
+            Budget["A1"] = "CATEGORY"
+            Budget["B1"] = "PLANNED"
+            Budget["C1"] = "SPENT"
+            Budget["D1"] = "REMAINING"
+            # Create categories column
+            Budget["A2"] = "Housing"
+            Budget["A3"] = "Utilities"
+            Budget["A4"] = "Transportation"
+            Budget["A5"] = "Groceries"
+            Budget["A6"] = "Entertainment"
+            Budget["A7"] = "Debts"
+            Budget["A8"] = "Other"
+            # Create budget amount column
+            Budget["B2"] = 0
+            Budget["B3"] = 0
+            Budget["B4"] = 0
+            Budget["B5"] = 0
+            Budget["B6"] = 0
+            Budget["B7"] = 0
+            Budget["B8"] = 0
+            # Create Remaining excel functions
+            Budget["D2"] = "=IF(B2-C2=0, \"\", B2-C2)"
+            Budget["D3"] = "=IF(B3-C3=0, \"\", B3-C3)"
+            Budget["D4"] = "=IF(B4-C4=0, \"\", B4-C4)"
+            Budget["D5"] = "=IF(B5-C5=0, \"\", B5-C5)"
+            Budget["D6"] = "=IF(B6-C6=0, \"\", B6-C6)"
+            Budget["D7"] = "=IF(B7-C7=0, \"\", B7-C7)"
+            Budget["D8"] = "=IF(B8-C8=0, \"\", B8-C8)"
+        else:
+            pass
+
+        # Configure Income worksheet
+        Income = wb["Income"]
+        if Income["A1"].value is None:
+        # Create headers
+            Income["A1"] = "SOURCE"
+            Income["B1"] = "AMOUNT"
+            Income["D1"] = "TOTAL"
+        else:
+            pass
+
+        # Configure Expenses worksheet
+        Expenses = wb["Expenses"]
+        if Expenses["A1"].value is None:
+        # Create headers
+            Expenses["A1"] = "AMOUNT"
+            Expenses["B1"] = "MERCHANT"
+            Expenses["C1"] = "CATEGORY"
+        # Create categories spent
+            Expenses["F1"] = "SPENT"
+            Expenses["E2"] = "HOUSING"
+            Expenses["E3"] = "UTILITIES"
+            Expenses["E4"] = "TRANSPORTATION"
+            Expenses["E5"] = "GROCERIES"
+            Expenses["E6"] = "ENTERTAINMENT"
+            Expenses["E7"] = "DEBTS"
+            Expenses["E8"] = "OTHERS"
+        else:
+            pass
+        wb.save("BudgetTracker.xlsx")
 create_workbook()
 
 
 def delete_workbook():
     if os.path.exists("BudgetTracker.xlsx"):
         os.remove("BudgetTracker.xlsx")
-    
-
-def set_categories():
-    wb = openpyxl.load_workbook(filename="BudgetTracker.xlsx")
-    Budget = wb["Budget"]
-    if Budget["A1"].value is None:
-    # Create headers
-        Budget["A1"] = "CATEGORY"
-        Budget["B1"] = "PLANNED"
-        Budget["C1"] = "SPENT"
-        Budget["D1"] = "REMAINING"
-    # Create categories column
-        Budget["A2"] = "Housing"
-        Budget["A3"] = "Utilities"
-        Budget["A4"] = "Transportation"
-        Budget["A5"] = "Groceries"
-        Budget["A6"] = "Entertainment"
-        Budget["A7"] = "Debts"
-        Budget["A8"] = "Other"
-    # Create budget amount column
-        Budget["B2"] = 0
-        Budget["B3"] = 0
-        Budget["B4"] = 0
-        Budget["B5"] = 0
-        Budget["B6"] = 0
-        Budget["B7"] = 0
-        Budget["B8"] = 0
-    # Create Remaining excel functions
-        Budget["D2"] = "=IF(B2-C2=0, \"\", B2-C2)"
-        Budget["D3"] = "=IF(B3-C3=0, \"\", B3-C3)"
-        Budget["D4"] = "=IF(B4-C4=0, \"\", B4-C4)"
-        Budget["D5"] = "=IF(B5-C5=0, \"\", B5-C5)"
-        Budget["D6"] = "=IF(B6-C6=0, \"\", B6-C6)"
-        Budget["D7"] = "=IF(B7-C7=0, \"\", B7-C7)"
-        Budget["D8"] = "=IF(B8-C8=0, \"\", B8-C8)"
-    else:
-        pass
-    wb.save("BudgetTracker.xlsx")
-
-
-def create_income_sheet():
-    wb = openpyxl.load_workbook(filename="BudgetTracker.xlsx")
-    Income = wb["Income"]
-    if Income["A1"].value is None:
-    # Create headers
-        Income["A1"] = "SOURCE"
-        Income["B1"] = "AMOUNT"
-        Income["D1"] = "TOTAL"
-    else:
-        pass
-    wb.save("BudgetTracker.xlsx")
-
-
-def create_expense_sheet():
-    wb = openpyxl.load_workbook(filename="BudgetTracker.xlsx")
-    Expenses = wb["Expenses"]
-    if Expenses["A1"].value is None:
-    # Create headers
-        Expenses["A1"] = "AMOUNT"
-        Expenses["B1"] = "MERCHANT"
-        Expenses["C1"] = "CATEGORY"
-    else:
-        pass
-    wb.save("BudgetTracker.xlsx")
 
 
 def set_budget():
@@ -202,7 +204,6 @@ def mainmenu():
                     delete_workbook()
                     print("All data has been reset")
                     create_workbook()
-                    set_categories()
             elif reset_verify == "N":
                 mainmenu()
             else:
@@ -213,7 +214,6 @@ def mainmenu():
 
 # Sub menu for categories
 def category_menu():
-    set_categories() 
     cat_option = ""
     while cat_option == "":
         """Print out of navigation menu """
@@ -278,7 +278,6 @@ def category_menu():
             
 # Sub menu for income
 def income_menu():
-    create_income_sheet()
     inc_option = ""
     while inc_option == "":
         """Print out of navigation menu """
@@ -404,7 +403,6 @@ def income_menu():
 
 # Sub menu for expenses
 def expenses_menu():
-    create_expense_sheet()
     exp_option = ""
     while exp_option == "":
         """Print out of navigation menu """
@@ -421,9 +419,9 @@ def expenses_menu():
         exp_option = input("Enter an option: ")
         clear()
         
-        exp_amount = []
-        exp_merchant = []
-        exp_category = []
+        raw_exp_amount = []
+        raw_exp_merchant = []
+        raw_exp_category = []
 
 
         # Open workbook
@@ -432,21 +430,28 @@ def expenses_menu():
 
         # This builds our arrays
         for cell in Expenses["A"]:
-            exp_amount.append(cell.value)
+            raw_exp_amount.append(cell.value)
         
         for cell in Expenses["B"]:
-            exp_merchant.append(cell.value)
+            raw_exp_merchant.append(cell.value)
         
         for cell in Expenses["C"]:
-            exp_category.append(cell.value)
+            raw_exp_category.append(cell.value)
 
 
         # Remove Excel headers from arrays
-        exp_amount.pop(0)
-        exp_merchant.pop(0)
-        exp_category.pop(0)
+        raw_exp_amount.pop(0)
+        raw_exp_merchant.pop(0)
+        raw_exp_category.pop(0)
+        
+        #Takes a list and a value, returns a new list with all instances of value removed.
+        def clean_array(list, val):
+            return [item for item in list if item != val]
 
-
+        exp_amount = clean_array(raw_exp_amount, None)
+        exp_merchant = clean_array(raw_exp_merchant, None)
+        exp_category = clean_array(raw_exp_category, None)
+            
         # Display current expenses
         def display_expenses():
             print("\nCurrent Expense(s) are:\n")
