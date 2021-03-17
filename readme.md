@@ -3,7 +3,7 @@
 ## Description
 ```
 This is a budget tracker built in Python to help users keep track of their monthly income/expense.
-App will allow the user to export to CSV as well as create charts/graphs to help visualize their
+App will create an XLSX file in the directory that the program is ran from that will display tables and a chart to help user visualize their
 spending behavior and patterns.
 
 ```
@@ -21,5 +21,9 @@ The features that were used for this project are:
 
 3. Calculate and display data based on an external factor
         - Upon entering a name at startup, we get today's date and notify the user how many days are left in the month.
+
+4. Visualize data in a graph, chart, or other visual representation of data
+        - At any point (preferably after all data has been entered), a user can "generate breakdown" from the main menu.
+        Openpyxl will create a pie chart on the Calc worksheet from data calculations made from other formulas within the workbook.
 
 ```
