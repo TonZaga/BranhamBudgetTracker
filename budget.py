@@ -24,6 +24,14 @@ def clear_screen():
         _ = system("clear")
 
 
+def open_excel():
+    # Get system OS so clear works with Windows, Mac, Linux
+    if name == "nt":
+        _ = system("start excel.exe BudgetTracker.xlsx")
+    else:
+        _ = system("open -a 'Microsoft Excel.app' 'BudgetTracker.xlsx'")
+
+
 def print_banner():
     # Print Banner
     ascii_banner = pyfiglet.figlet_format("Branham Budget Tracker")
@@ -589,7 +597,6 @@ def create_chart():
     Calc.add_chart(chart, "A5") 
     # save the file 
     wb.save("BudgetTracker.xlsx")
-    # Open file in Excel
-    os.system("start EXCEL.EXE BudgetTracker.xlsx")
+    open_excel()
 
 mainmenu()
