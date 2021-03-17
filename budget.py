@@ -3,7 +3,7 @@ Branham Budget Tracker
 
 created by: Anthony Branham
 created on: 2/19/2021
-last updated on: 3/15/2021
+last updated on: 3/17/2021
 
 """
 import datetime
@@ -16,8 +16,8 @@ from calendar import monthrange
 from openpyxl.chart import PieChart, Reference
 
 
-
 def clear_screen():
+    # Get system OS so clear works with Windows, Mac, Linux
     if name == "nt":
         _ = system("cls")
     else:
@@ -74,7 +74,6 @@ def create_workbook():
             wb.save(filename="BudgetTracker.xlsx")
         else:
             pass
-
         # Configure Budget worksheet
         wb = openpyxl.load_workbook(filename="BudgetTracker.xlsx")
         Budget = wb["Budget"]
@@ -118,7 +117,6 @@ def create_workbook():
             Budget["D8"] = "=IF(B8-C8=0, \"\", B8-C8)"
         else:
             pass
-
         # Configure Income worksheet
         Income = wb["Income"]
         if Income["A1"].value is None:
@@ -127,7 +125,6 @@ def create_workbook():
             Income["B1"] = "AMOUNT"
         else:
             pass
-
         # Configure Expenses worksheet
         Expenses = wb["Expenses"]
         if Expenses["A1"].value is None:
@@ -135,7 +132,6 @@ def create_workbook():
             Expenses["A1"] = "AMOUNT"
             Expenses["B1"] = "MERCHANT"
             Expenses["C1"] = "CATEGORY"
-
         # Configure Calculations worksheet
         Calc = wb["Calc"]
         if Calc["A1"].value is None:
@@ -151,7 +147,6 @@ def create_workbook():
             Calc["E2"] = "=SUM(A2-B2)"
         else:
             pass
-
         # Adjust column widths
         Budget.column_dimensions['A'].width = 15
         Budget.column_dimensions['B'].width = 15
@@ -225,7 +220,6 @@ def mainmenu():
         print(30 * '-')
         option = input("Enter an option: ")
         clear_screen()
-
         if option.lower() == 'q':
             print("Exiting program...")
             exit()
@@ -276,7 +270,6 @@ def category_menu():
         # Open workbook
         wb = openpyxl.load_workbook(filename="BudgetTracker.xlsx")
         Budget = wb["Budget"]
-
         # This builds our arrays
         for row_cells in Budget.iter_rows(min_row=2, max_row=8, max_col=2):
             for cell in row_cells:
@@ -284,7 +277,6 @@ def category_menu():
                     categories.append(cell.value.lower())
                 else:
                     values.append(float(cell.value))
-
         # Display current incomes
         def display_categories():
             print("\nCurrent categories are:\n")
@@ -293,7 +285,6 @@ def category_menu():
 
         if cat_option.lower() == "q":
             print("Exiting program...")
-
         # Displays categories and set budgets
         elif cat_option == "1":
             if len(categories) == 0:
@@ -304,20 +295,19 @@ def category_menu():
                 clear_screen()
                 display_categories()
                 category_menu()
-
         # Set budget for a category
         elif cat_option == "2":
             print("\nCategories are:\n")
             set_budget()
             category_menu()
-
         # Return to main menu
         elif cat_option == "3":
             mainmenu()
         else:
             print("Invalid menu option.  Please try again")
             category_menu()
-            
+
+
 # Sub menu for income
 def income_menu():
     inc_option = ""
@@ -342,7 +332,6 @@ def income_menu():
         # Open workbook
         wb = openpyxl.load_workbook(filename="BudgetTracker.xlsx")
         Income = wb["Income"]
-
         # This builds our arrays
         for row_cells in Income.iter_rows(min_row=2, max_col=2):
             for cell in row_cells:
@@ -350,18 +339,14 @@ def income_menu():
                     incomes.append(cell.value.lower())
                 else:
                     values.append(float(cell.value))
-
         # Display current incomes
         def display_incomes():
             print("\nCurrent Income(s) are:\n")
             for i in range(len(incomes)):
                 print(str(i+1) + "." + " " + incomes[i].ljust(15," ") + str(values[i]))
-        
-
         # Quit out of program
         if inc_option.lower() == "q":
             print("Exiting program...")
-
         # Show current incomes
         elif inc_option == "1":
             if len(incomes) == 0:
@@ -372,7 +357,6 @@ def income_menu():
                 clear_screen()
                 display_incomes()
                 income_menu()
-
         # Enter a new income entry
         elif inc_option == "2":
             display_incomes()
@@ -392,7 +376,6 @@ def income_menu():
                 wb.save("BudgetTracker.xlsx")
                 display_incomes()
                 income_menu()
-
         # Modify an income entry
         elif inc_option == "3":
             display_incomes()
@@ -413,7 +396,6 @@ def income_menu():
                 print("Amount unchanged")
             wb.save("BudgetTracker.xlsx")
             income_menu()
-
         # Delete an income entry
         elif inc_option == "4":
             display_incomes()
@@ -425,13 +407,13 @@ def income_menu():
             display_incomes()
             wb.save("BudgetTracker.xlsx")
             income_menu()
-
         # Return to main menu
         elif inc_option == "5":
             mainmenu()
         else:
             print("Invalid menu option.  Please try again")
             income_menu()
+
 
 # Sub menu for expenses
 def expenses_menu():
@@ -459,24 +441,17 @@ def expenses_menu():
         # Open workbook
         wb = openpyxl.load_workbook(filename="BudgetTracker.xlsx")
         Expenses = wb["Expenses"]
-
         # This builds our arrays
         for cell in Expenses["A"]:
             exp_amount.append(cell.value)
-        
         for cell in Expenses["B"]:
             exp_merchant.append(cell.value)
-        
         for cell in Expenses["C"]:
             exp_category.append(cell.value)
-
-
         # Remove Excel headers from arrays
         exp_amount.pop(0)
         exp_merchant.pop(0)
         exp_category.pop(0)
-        
-            
         # Display current expenses
         def display_expenses():
             print("\nCurrent Expense(s) are:\n")
@@ -485,10 +460,8 @@ def expenses_menu():
                 str(exp_amount[i]).ljust(12," ") +
                 str(exp_merchant[i]).ljust(25," ") +
                 str(exp_category[i]).ljust(20," "))
-        
         if exp_option.lower() == "q":
             print("Exiting program...")
-
         # Shows expenses if any entered
         elif exp_option == "1":
             if len(exp_amount) == 0:
@@ -499,7 +472,6 @@ def expenses_menu():
                 clear_screen()
                 display_expenses()
                 expenses_menu()
-
         # Enter a new expense
         elif exp_option == "2":
             display_expenses()
@@ -534,8 +506,6 @@ def expenses_menu():
             wb.save("BudgetTracker.xlsx")
             display_expenses()
             expenses_menu()
-
-
             # Modify an expense entry
         elif exp_option == "3":
             if len(exp_amount) == 0:
@@ -573,7 +543,6 @@ def expenses_menu():
                 print("Category unchanged")
             wb.save("BudgetTracker.xlsx")
             expenses_menu()
-            
         # Delete an expense entry
         elif exp_option == "4":
             if len(exp_amount) == 0:
@@ -605,31 +574,22 @@ def create_chart():
 
     for row in Calc:
         data.append(row)
-
     # Create object of PieChart class 
     chart = PieChart() 
-    
-    # create data for plotting 
+    # Create data for plotting 
     labels = Reference(Calc, min_row = 1, max_row = 1, min_col = 2, max_col = 5) 
-                        
     data = Reference(Calc, min_row = 2, max_row = 7, min_col = 1, max_col = 5) 
-    
-    # adding data to the Pie chart object 
+    # Adding data to the Pie chart object
     chart.add_data(data, from_rows=True, titles_from_data = True) 
-    
-    # set labels in the chart object 
+    # Set labels in the chart object 
     chart.set_categories(labels) 
-    
-    # set the title of the chart 
+    # Set the title of the chart 
     chart.title = " Budget breakdown "
-    
-    # add chart to the sheet 
-    # the top-left corner of a chart 
-    # is anchored to cell A5.
+    # Anchor chart to cell A5.
     Calc.add_chart(chart, "A5") 
-    
     # save the file 
     wb.save("BudgetTracker.xlsx")
+    # Open file in Excel
     os.system("start EXCEL.EXE BudgetTracker.xlsx")
 
 mainmenu()
