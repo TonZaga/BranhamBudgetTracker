@@ -12,6 +12,7 @@ import os.path
 import os
 import pyfiglet
 from calendar import monthrange
+from openpyxl.chart import PieChart, Reference
 
 
 clear = lambda: os.system('cls')
@@ -228,13 +229,13 @@ def mainmenu():
             main_option = income_menu()
         elif option == "3":
             main_option = expenses_menu()
-        # elif option == "4":
-        #     print("Generating breakdown")
-        #     # Add table for calculations between income/expense w/ exception #
+        elif option == "4":
+            print("Generating breakdown...\n")
+            create_chart()
         elif option == "5":
             reset_verify = input("Are you sure you want to reset your budget? Y/N ").upper()
             if reset_verify == "Y":
-                reset_verify2 = input("**You will not be able to recover lost data after this point.**\n**Are you sure you wish to continue?** Y/N ")
+                reset_verify2 = input("**You will not be able to recover lost data after this point.**\n**Are you sure you wish to continue?** Y/N ").upper()
                 if reset_verify2 == "Y":
                     delete_workbook()
                     print("All data has been reset")
@@ -415,7 +416,6 @@ def income_menu():
                 income_menu()
             incomes.pop(delete_income - 1)
             Income.delete_rows(delete_income + 1)
-            total_income()
             display_incomes()
             wb.save("BudgetTracker.xlsx")
             income_menu()
@@ -589,5 +589,41 @@ def expenses_menu():
         else:
             print("Invalid menu option.  Please try again")
             expenses_menu()
+
+
+def create_chart():
+    wb = openpyxl.load_workbook(filename="BudgetTracker.xlsx") 
+    Calc = wb["Calc"]
+    
+    data = []
+
+    for row in Calc:
+        data.append(row)
+
+    # Create object of PieChart class 
+    chart = PieChart() 
+    
+    # create data for plotting 
+    labels = Reference(Calc, min_row = 1, max_row = 1, min_col = 2, max_col = 5) 
+                        
+    data = Reference(Calc, min_row = 2, max_row = 7, min_col = 1, max_col = 5) 
+    
+    # adding data to the Pie chart object 
+    chart.add_data(data, from_rows=True, titles_from_data = True) 
+    
+    # set labels in the chart object 
+    chart.set_categories(labels) 
+    
+    # set the title of the chart 
+    chart.title = " Budget breakdown "
+    
+    # add chart to the sheet 
+    # the top-left corner of a chart 
+    # is anchored to cell A5.
+    Calc.add_chart(chart, "A5") 
+    
+    # save the file 
+    wb.save("BudgetTracker.xlsx")
+    os.system("start EXCEL.EXE BudgetTracker.xlsx")
 
 mainmenu()
