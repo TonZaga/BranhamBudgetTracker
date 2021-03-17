@@ -13,6 +13,8 @@ import os
 import pyfiglet
 from os import system, name
 from calendar import monthrange
+from openpyxl.chart import PieChart, Reference
+
 
 
 def clear_screen():
@@ -65,6 +67,11 @@ def create_workbook():
             ws2.title = "Expenses"
             ws2.sheet_properties.tabColor = "FF0000"
             wb.save(filename="BudgetTracker.xlsx")
+            # Create calculations sheet
+            ws3 = wb.create_sheet("Sheet_C")
+            ws3.title = "Calc"
+            ws3.sheet_properties.tabColor = "4B0082"
+            wb.save(filename="BudgetTracker.xlsx")
         else:
             pass
 
@@ -93,6 +100,14 @@ def create_workbook():
             Budget["B6"] = 0
             Budget["B7"] = 0
             Budget["B8"] = 0
+            # Create budget amount column
+            Budget["C2"] = "=SUMIF(Expenses!C:C, A2, Expenses!A:A)"
+            Budget["C3"] = "=SUMIF(Expenses!C:C, A3, Expenses!A:A)"
+            Budget["C4"] = "=SUMIF(Expenses!C:C, A4, Expenses!A:A)"
+            Budget["C5"] = "=SUMIF(Expenses!C:C, A5, Expenses!A:A)"
+            Budget["C6"] = "=SUMIF(Expenses!C:C, A6, Expenses!A:A)"
+            Budget["C7"] = "=SUMIF(Expenses!C:C, A7, Expenses!A:A)"
+            Budget["C8"] = "=SUMIF(Expenses!C:C, A8, Expenses!A:A)"
             # Create Remaining excel functions
             Budget["D2"] = "=IF(B2-C2=0, \"\", B2-C2)"
             Budget["D3"] = "=IF(B3-C3=0, \"\", B3-C3)"
@@ -110,7 +125,6 @@ def create_workbook():
         # Create headers
             Income["A1"] = "SOURCE"
             Income["B1"] = "AMOUNT"
-            Income["D1"] = "TOTAL"
         else:
             pass
 
@@ -121,17 +135,38 @@ def create_workbook():
             Expenses["A1"] = "AMOUNT"
             Expenses["B1"] = "MERCHANT"
             Expenses["C1"] = "CATEGORY"
-        # Create categories spent
-            Expenses["F1"] = "SPENT"
-            Expenses["E2"] = "HOUSING"
-            Expenses["E3"] = "UTILITIES"
-            Expenses["E4"] = "TRANSPORTATION"
-            Expenses["E5"] = "GROCERIES"
-            Expenses["E6"] = "ENTERTAINMENT"
-            Expenses["E7"] = "DEBTS"
-            Expenses["E8"] = "OTHERS"
+
+        # Configure Calculations worksheet
+        Calc = wb["Calc"]
+        if Calc["A1"].value is None:
+            Calc["A1"] = "Total Income"
+            Calc["B1"] = "Total Planned"
+            Calc["C1"] = "Total Spent"
+            Calc["D1"] = "Total Remaining"
+            Calc["E1"] = "$ Left to Budget"
+            Calc["A2"] = "=SUM(Income!B:B)"
+            Calc["B2"] = "=SUM(Budget!B:B)"
+            Calc["C2"] = "=SUM(Budget!C:C)"
+            Calc["D2"] = "=SUM(Budget!D:D)"
+            Calc["E2"] = "=SUM(A2-B2)"
         else:
             pass
+
+        # Adjust column widths
+        Budget.column_dimensions['A'].width = 15
+        Budget.column_dimensions['B'].width = 15
+        Budget.column_dimensions['C'].width = 15
+        Budget.column_dimensions['D'].width = 15
+        Income.column_dimensions['A'].width = 15
+        Income.column_dimensions['B'].width = 15
+        Expenses.column_dimensions['A'].width = 15
+        Expenses.column_dimensions['B'].width = 15
+        Expenses.column_dimensions['C'].width = 15
+        Calc.column_dimensions['A'].width = 15
+        Calc.column_dimensions['B'].width = 15
+        Calc.column_dimensions['C'].width = 15
+        Calc.column_dimensions['D'].width = 15
+        Calc.column_dimensions['E'].width = 15
         wb.save("BudgetTracker.xlsx")
 create_workbook()
 
@@ -170,6 +205,7 @@ def set_budget():
         print("Budget for OTHER has been set to ${}.".format(budget_amount))
     else:
         print("Invalid category selection")
+        Budget
     wb.save("BudgetTracker.xlsx")
 
 
@@ -199,13 +235,13 @@ def mainmenu():
             main_option = income_menu()
         elif option == "3":
             main_option = expenses_menu()
-        # elif option == "4":
-        #     print("Generating breakdown")
-        #     # Add table for calculations between income/expense w/ exception #
+        elif option == "4":
+            print("Generating breakdown...\n")
+            create_chart()
         elif option == "5":
             reset_verify = input("Are you sure you want to reset your budget? Y/N ").upper()
             if reset_verify == "Y":
-                reset_verify2 = input("**You will not be able to recover lost data after this point.**\n**Are you sure you wish to continue?** Y/N ")
+                reset_verify2 = input("**You will not be able to recover lost data after this point.**\n**Are you sure you wish to continue?** Y/N ").upper()
                 if reset_verify2 == "Y":
                     delete_workbook()
                     print("All data has been reset")
@@ -242,7 +278,7 @@ def category_menu():
         Budget = wb["Budget"]
 
         # This builds our arrays
-        for row_cells in Budget.iter_rows(min_row=2, max_col=2):
+        for row_cells in Budget.iter_rows(min_row=2, max_row=8, max_col=2):
             for cell in row_cells:
                 if type(cell.value) == str:
                     categories.append(cell.value.lower())
@@ -321,12 +357,6 @@ def income_menu():
             for i in range(len(incomes)):
                 print(str(i+1) + "." + " " + incomes[i].ljust(15," ") + str(values[i]))
         
-        # Total all incomes
-        def total_income():
-            total = sum(values)
-            print(total)
-            Income["D2"] = total
-            wb.save(filename="BudgetTracker.xlsx")
 
         # Quit out of program
         if inc_option.lower() == "q":
@@ -341,7 +371,6 @@ def income_menu():
             else:
                 clear_screen()
                 display_incomes()
-                total_income()
                 income_menu()
 
         # Enter a new income entry
@@ -360,7 +389,6 @@ def income_menu():
                 Income.append([src_income, income_amount])
                 incomes.append(src_income)
                 values.append(income_amount)
-                total_income()
                 wb.save("BudgetTracker.xlsx")
                 display_incomes()
                 income_menu()
@@ -383,7 +411,6 @@ def income_menu():
                 Income["B" + str(modify_income + 1)] = float(new_amount)
             else:
                 print("Amount unchanged")
-            total_income()
             wb.save("BudgetTracker.xlsx")
             income_menu()
 
@@ -395,7 +422,6 @@ def income_menu():
                 income_menu()
             incomes.pop(delete_income - 1)
             Income.delete_rows(delete_income + 1)
-            total_income()
             display_incomes()
             wb.save("BudgetTracker.xlsx")
             income_menu()
@@ -425,9 +451,9 @@ def expenses_menu():
         exp_option = input("Enter an option: ")
         clear_screen()
         
-        raw_exp_amount = []
-        raw_exp_merchant = []
-        raw_exp_category = []
+        exp_amount = []
+        exp_merchant = []
+        exp_category = []
 
 
         # Open workbook
@@ -436,36 +462,29 @@ def expenses_menu():
 
         # This builds our arrays
         for cell in Expenses["A"]:
-            raw_exp_amount.append(cell.value)
+            exp_amount.append(cell.value)
         
         for cell in Expenses["B"]:
-            raw_exp_merchant.append(cell.value)
+            exp_merchant.append(cell.value)
         
         for cell in Expenses["C"]:
-            raw_exp_category.append(cell.value)
+            exp_category.append(cell.value)
 
 
         # Remove Excel headers from arrays
-        raw_exp_amount.pop(0)
-        raw_exp_merchant.pop(0)
-        raw_exp_category.pop(0)
+        exp_amount.pop(0)
+        exp_merchant.pop(0)
+        exp_category.pop(0)
         
-        #Takes a list and a value, returns a new list with all instances of value removed.
-        def clean_array(list, val):
-            return [item for item in list if item != val]
-
-        exp_amount = clean_array(raw_exp_amount, None)
-        exp_merchant = clean_array(raw_exp_merchant, None)
-        exp_category = clean_array(raw_exp_category, None)
             
         # Display current expenses
         def display_expenses():
             print("\nCurrent Expense(s) are:\n")
             for i in range(len(exp_amount)):
                 print (str(str(i+1) + ".").ljust(5," ") +
-                str(exp_amount[i]).ljust(15," ") +
-                str(exp_merchant[i]).ljust(15," ") +
-                str(exp_category[i]).ljust(15," "))
+                str(exp_amount[i]).ljust(12," ") +
+                str(exp_merchant[i]).ljust(25," ") +
+                str(exp_category[i]).ljust(20," "))
         
         if exp_option.lower() == "q":
             print("Exiting program...")
@@ -552,7 +571,6 @@ def expenses_menu():
                 print("Category has been changed")
             else:
                 print("Category unchanged")
-
             wb.save("BudgetTracker.xlsx")
             expenses_menu()
             
@@ -577,5 +595,41 @@ def expenses_menu():
         else:
             print("Invalid menu option.  Please try again")
             expenses_menu()
+
+
+def create_chart():
+    wb = openpyxl.load_workbook(filename="BudgetTracker.xlsx") 
+    Calc = wb["Calc"]
+    
+    data = []
+
+    for row in Calc:
+        data.append(row)
+
+    # Create object of PieChart class 
+    chart = PieChart() 
+    
+    # create data for plotting 
+    labels = Reference(Calc, min_row = 1, max_row = 1, min_col = 2, max_col = 5) 
+                        
+    data = Reference(Calc, min_row = 2, max_row = 7, min_col = 1, max_col = 5) 
+    
+    # adding data to the Pie chart object 
+    chart.add_data(data, from_rows=True, titles_from_data = True) 
+    
+    # set labels in the chart object 
+    chart.set_categories(labels) 
+    
+    # set the title of the chart 
+    chart.title = " Budget breakdown "
+    
+    # add chart to the sheet 
+    # the top-left corner of a chart 
+    # is anchored to cell A5.
+    Calc.add_chart(chart, "A5") 
+    
+    # save the file 
+    wb.save("BudgetTracker.xlsx")
+    os.system("start EXCEL.EXE BudgetTracker.xlsx")
 
 mainmenu()
