@@ -11,9 +11,15 @@ import openpyxl
 import os.path
 import os
 import pyfiglet
+from os import system, name
 from calendar import monthrange
 
-clear = lambda: os.system('cls')
+
+def clear_screen():
+    if name == "nt":
+        _ = system("cls")
+    else:
+        _ = system("clear")
 
 
 def print_banner():
@@ -182,7 +188,7 @@ def mainmenu():
         print("q. Quit")
         print(30 * '-')
         option = input("Enter an option: ")
-        clear()
+        clear_screen()
 
         if option.lower() == 'q':
             print("Exiting program...")
@@ -226,7 +232,7 @@ def category_menu():
         print("q. Quit")
         print(30 * '-')
         cat_option = input("Enter an option: ")
-        clear()
+        clear_screen()
 
         categories = []
         values = []
@@ -255,11 +261,11 @@ def category_menu():
         # Displays categories and set budgets
         elif cat_option == "1":
             if len(categories) == 0:
-                clear()
+                clear_screen()
                 print("*** No categories have been added yet ***\n")
                 category_menu()
             else:
-                clear()
+                clear_screen()
                 display_categories()
                 category_menu()
 
@@ -292,7 +298,7 @@ def income_menu():
         print("q. Quit")
         print(30 * '-')
         inc_option = input("Enter an option: ")
-        clear()
+        clear_screen()
 
         incomes= []
         values = []
@@ -329,11 +335,11 @@ def income_menu():
         # Show current incomes
         elif inc_option == "1":
             if len(incomes) == 0:
-                clear()
+                clear_screen()
                 print("*** No incomes have been added yet ***\n")
                 income_menu()
             else:
-                clear()
+                clear_screen()
                 display_incomes()
                 total_income()
                 income_menu()
@@ -417,7 +423,7 @@ def expenses_menu():
         print("q. Quit")
         print(30 * '-')
         exp_option = input("Enter an option: ")
-        clear()
+        clear_screen()
         
         raw_exp_amount = []
         raw_exp_merchant = []
@@ -467,11 +473,11 @@ def expenses_menu():
         # Shows expenses if any entered
         elif exp_option == "1":
             if len(exp_amount) == 0:
-                clear()
+                clear_screen()
                 print("*** No expenses have been added yet ***\n")
                 expenses_menu()
             else:
-                clear()
+                clear_screen()
                 display_expenses()
                 expenses_menu()
 
@@ -514,7 +520,7 @@ def expenses_menu():
             # Modify an expense entry
         elif exp_option == "3":
             if len(exp_amount) == 0:
-                clear()
+                clear_screen()
                 print("*** No expenses have been added yet ***\n")
                 expenses_menu()
             else:
@@ -553,7 +559,7 @@ def expenses_menu():
         # Delete an expense entry
         elif exp_option == "4":
             if len(exp_amount) == 0:
-                clear()
+                clear_screen()
                 print("*** No expenses have been added yet ***\n")
                 expenses_menu()
             else:
