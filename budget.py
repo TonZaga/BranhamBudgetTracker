@@ -28,6 +28,8 @@ def open_excel():
     # Get system OS so clear works with Windows, Mac, Linux
     if name == "nt":
         _ = system("start excel.exe BudgetTracker.xlsx")
+    elif name == "posix":
+        _ = system("libreoffice --calc BudgetTracker.xlsx")
     else:
         _ = system("open -a 'Microsoft Excel.app' 'BudgetTracker.xlsx'")
 
