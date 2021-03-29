@@ -3,12 +3,11 @@ Branham Budget Tracker
 
 created by: Anthony Branham
 created on: 2/19/2021
-last updated on: 3/17/2021
+last updated on: 3/29/2021
 
 """
 import datetime
 import tkinter
-from typing import Sized
 import openpyxl
 import os.path
 import os
@@ -24,14 +23,10 @@ root.title(" - Branham Budget Tracker")
 root.iconbitmap("images\BBT.ico")
 
 
-# e = Entry(root, width = 50, bg = "gray")
-# e.pack()
-# e.insert(0, "Enter first name")
-
-
 banner = ImageTk.PhotoImage(Image.open("images\BBTheader.png"))
 label1 = Label(image=banner)
 label1.grid(row=0, columnspan=3)
+
 
 def quit_verify():
     qw=Tk()
@@ -56,6 +51,7 @@ placeholder1 = Label(root, text=" ")
 chart_button = Button(root, text="Show chart", font=10, width=21, height=3, bg="#216d45", fg="white")
 reset_button = Button(root, text="Reset data", font=10, width=21, height=3, bg="#216d45", fg="white")
 quit_button = Button(root, text="Quit", font=10, width=21, height=3, bg="#216d45", fg="white", command=quit_verify)
+
 
 # Configure button layout
 cat_button.grid(row=1, column=0)
