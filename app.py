@@ -23,9 +23,9 @@ root.title(" - Branham Budget Tracker")
 root.iconbitmap("images\BBT.ico")
 
 
-banner = ImageTk.PhotoImage(Image.open("images\BBTheader.png"))
+banner = ImageTk.PhotoImage(Image.open("images\BBTheader2.png"))
 label1 = Label(image=banner)
-label1.grid(row=0, columnspan=3)
+label1.grid(row=0, column=0, columnspan=6)
 
 
 def quit_verify():
@@ -44,25 +44,24 @@ def quit_verify():
 
 
 # Configure button functionality
-cat_button = Button(root, text="Categories", font=10, width=21, height=3, bg="#216d45", fg="white")
-inc_button = Button(root, text="Incomes", font=10, width=21, height=3, bg="#216d45", fg="white")
-exp_button = Button(root, text="Expenses", font=10, width=21, height=3, bg="#216d45", fg="white")
-placeholder1 = Label(root, text=" ")
-chart_button = Button(root, text="Show chart", font=10, width=21, height=3, bg="#216d45", fg="white")
-reset_button = Button(root, text="Reset data", font=10, width=21, height=3, bg="#216d45", fg="white")
-quit_button = Button(root, text="Quit", font=10, width=21, height=3, bg="#216d45", fg="white", command=quit_verify)
+cat_button = Button(root, text="Categories", font=10, width=13, height=2, bg="#216d45", fg="white")
+inc_button = Button(root, text="Incomes", font=10, width=13, height=2, bg="#216d45", fg="white")
+exp_button = Button(root, text="Expenses", font=10, width=13, height=2, bg="#216d45", fg="white")
+chart_button = Button(root, text="Show chart", font=10, width=13, height=2, bg="#216d45", fg="white")
+reset_button = Button(root, text="Reset data", font=10, width=13, height=2, bg="#216d45", fg="white")
+quit_button = Button(root, text="Quit", font=10, width=13, height=2, bg="#216d45", fg="white", command=quit_verify)
 
 
 # Configure button layout
 cat_button.grid(row=1, column=0)
 inc_button.grid(row=1, column=1)
 exp_button.grid(row=1, column=2)
-chart_button.grid(row=2, column=0)
-reset_button.grid(row=2, column=1)
-quit_button.grid(row=2, column=2)
+chart_button.grid(row=1, column=3)
+reset_button.grid(row=1, column=4)
+quit_button.grid(row=1, column=5)
 
 root.grid
-root.geometry("900x600")
+root.geometry("760x700")
 root.mainloop()
 
 
