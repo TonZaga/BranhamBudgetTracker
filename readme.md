@@ -2,6 +2,8 @@
 
 ## Description
 ```
+**Run budget.py to start the application - app.py is a GUI work in-progress**
+
 This is a budget tracker built in Python to help users keep track of their monthly income/expense.
 App will create an XLSX file in the directory that the program is ran from that will display tables and a chart to help user visualize their
 spending behavior and patterns.
