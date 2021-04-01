@@ -13,10 +13,11 @@ import os.path
 import os
 import pyfiglet
 from os import system, name
-from calendar import monthrange
+from calendar import month, monthrange
 from openpyxl.chart import PieChart, Reference
 from tkinter import *
 from PIL import ImageTk, Image
+
 
 
 def quit_verify():
@@ -43,10 +44,17 @@ class budgetApp(tk.Tk):
         self.banner = ImageTk.PhotoImage(Image.open("images\BBTheader2.png"))
         label1 = Label(image=self.banner)
         label1.pack(side="top", fill="x", pady=10)
+        # Display date and days remaining in month
+        today = datetime.datetime.today()
+        today_date = today.strftime("%A %B %d, %Y")
+        day_of = int(today.strftime("%d"))
+        now = datetime.datetime.now()
+        month_end = monthrange(now.year, now.month)[1]
+        days_remaining = (month_end) - (day_of)
+        remain_label = Label(self, text="Today is {}  /  There are {} days remaining in the month.\n".format(today_date, days_remaining), font=("Helvetica", 12))
+        remain_label.pack()
 
-        # the container is where we'll stack a bunch of frames
-        # on top of each other, then the one we want visible
-        # will be raised above the others
+        # Configure the container where page frames show
         container = tk.Frame(self)
         container.pack(side="top", fill="both", expand=True)
         container.grid_rowconfigure(0, weight=1)
@@ -58,9 +66,7 @@ class budgetApp(tk.Tk):
             frame = F(parent=container, controller=self)
             self.frames[page_name] = frame
 
-            # put all of the pages in the same location;
-            # the one on the top of the stacking order
-            # will be the one that is visible.
+            # Stack all pages in same location
             frame.grid(row=0, column=0, sticky="nsew")
 
         self.show_frame("Home")
@@ -77,16 +83,15 @@ class Home(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
         # Navigation buttons
-        home_button = tk.Button(self, text="Home", font=10, width=11, height=2, bg="#216d45", fg="white", command=lambda: controller.show_frame("Home"))
-        cat_button = tk.Button(self, text="Categories", font=10, width=11, height=2, bg="#216d45", fg="white", command=lambda: controller.show_frame("Categories"))
-        inc_button = tk.Button(self, text="Incomes", font=10, width=11, height=2, bg="#216d45", fg="white", command=lambda: controller.show_frame("Incomes"))
-        exp_button = tk.Button(self, text="Expenses", font=10, width=11, height=2, bg="#216d45", fg="white", command=lambda: controller.show_frame("Expenses"))
-        chart_button = tk.Button(self, text="Chart", font=10, width=11, height=2, bg="#216d45", fg="white", command=lambda: controller.show_frame("Chart"))
-        reset_button = tk.Button(self, text="Reset", font=10, width=11, height=2, bg="#216d45", fg="white", command=lambda: controller.show_frame("Reset"))
-        quit_button = tk.Button(self, text="Quit", font=10, width=11, height=2, bg="#216d45", fg="white", command=quit_verify)
+        home_button = tk.Button(self, text="Home", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=lambda: controller.show_frame("Home"))
+        cat_button = tk.Button(self, text="Categories", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=lambda: controller.show_frame("Categories"))
+        inc_button = tk.Button(self, text="Incomes", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=lambda: controller.show_frame("Incomes"))
+        exp_button = tk.Button(self, text="Expenses", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=lambda: controller.show_frame("Expenses"))
+        chart_button = tk.Button(self, text="Chart", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=lambda: controller.show_frame("Chart"))
+        reset_button = tk.Button(self, text="Reset", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=lambda: controller.show_frame("Reset"))
+        quit_button = tk.Button(self, text="Quit", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=quit_verify)
 
         home_button.grid(row=1, column=0), cat_button.grid(row=1, column=1), inc_button.grid(row=1, column=2), exp_button.grid(row=1, column=3), chart_button.grid(row=1, column=4), reset_button.grid(row=1, column=5), quit_button.grid(row=1, column=6)
-
 
 
 class Categories(tk.Frame):
@@ -95,15 +100,18 @@ class Categories(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
         # Navigation buttons
-        home_button = tk.Button(self, text="Home", font=10, width=11, height=2, bg="#216d45", fg="white", command=lambda: controller.show_frame("Home"))
-        cat_button = tk.Button(self, text="Categories", font=10, width=11, height=2, bg="#216d45", fg="white", command=lambda: controller.show_frame("Categories"))
-        inc_button = tk.Button(self, text="Incomes", font=10, width=11, height=2, bg="#216d45", fg="white", command=lambda: controller.show_frame("Incomes"))
-        exp_button = tk.Button(self, text="Expenses", font=10, width=11, height=2, bg="#216d45", fg="white", command=lambda: controller.show_frame("Expenses"))
-        chart_button = tk.Button(self, text="Chart", font=10, width=11, height=2, bg="#216d45", fg="white", command=lambda: controller.show_frame("Chart"))
-        reset_button = tk.Button(self, text="Reset", font=10, width=11, height=2, bg="#216d45", fg="white", command=lambda: controller.show_frame("Reset"))
-        quit_button = tk.Button(self, text="Quit", font=10, width=11, height=2, bg="#216d45", fg="white", command=quit_verify)
+        home_button = tk.Button(self, text="Home", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=lambda: controller.show_frame("Home"))
+        cat_button = tk.Button(self, text="Categories", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=lambda: controller.show_frame("Categories"))
+        inc_button = tk.Button(self, text="Incomes", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=lambda: controller.show_frame("Incomes"))
+        exp_button = tk.Button(self, text="Expenses", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=lambda: controller.show_frame("Expenses"))
+        chart_button = tk.Button(self, text="Chart", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=lambda: controller.show_frame("Chart"))
+        reset_button = tk.Button(self, text="Reset", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=lambda: controller.show_frame("Reset"))
+        quit_button = tk.Button(self, text="Quit", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=quit_verify)
 
         home_button.grid(row=1, column=0), cat_button.grid(row=1, column=1), inc_button.grid(row=1, column=2), exp_button.grid(row=1, column=3), chart_button.grid(row=1, column=4), reset_button.grid(row=1, column=5), quit_button.grid(row=1, column=6)
+
+        # Build category fields
+        
 
 
 class Incomes(tk.Frame):
@@ -111,16 +119,14 @@ class Incomes(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-        # label = tk.Label(self, text="This is page 2")
-        # label.pack(side="top", fill="x", pady=10)
         # Navigation buttons
-        home_button = tk.Button(self, text="Home", font=10, width=11, height=2, bg="#216d45", fg="white", command=lambda: controller.show_frame("Home"))
-        cat_button = tk.Button(self, text="Categories", font=10, width=11, height=2, bg="#216d45", fg="white", command=lambda: controller.show_frame("Categories"))
-        inc_button = tk.Button(self, text="Incomes", font=10, width=11, height=2, bg="#216d45", fg="white", command=lambda: controller.show_frame("Incomes"))
-        exp_button = tk.Button(self, text="Expenses", font=10, width=11, height=2, bg="#216d45", fg="white", command=lambda: controller.show_frame("Expenses"))
-        chart_button = tk.Button(self, text="Chart", font=10, width=11, height=2, bg="#216d45", fg="white", command=lambda: controller.show_frame("Chart"))
-        reset_button = tk.Button(self, text="Reset", font=10, width=11, height=2, bg="#216d45", fg="white", command=lambda: controller.show_frame("Reset"))
-        quit_button = tk.Button(self, text="Quit", font=10, width=11, height=2, bg="#216d45", fg="white", command=quit_verify)
+        home_button = tk.Button(self, text="Home", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=lambda: controller.show_frame("Home"))
+        cat_button = tk.Button(self, text="Categories", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=lambda: controller.show_frame("Categories"))
+        inc_button = tk.Button(self, text="Incomes", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=lambda: controller.show_frame("Incomes"))
+        exp_button = tk.Button(self, text="Expenses", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=lambda: controller.show_frame("Expenses"))
+        chart_button = tk.Button(self, text="Chart", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=lambda: controller.show_frame("Chart"))
+        reset_button = tk.Button(self, text="Reset", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=lambda: controller.show_frame("Reset"))
+        quit_button = tk.Button(self, text="Quit", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=quit_verify)
 
         home_button.grid(row=1, column=0), cat_button.grid(row=1, column=1), inc_button.grid(row=1, column=2), exp_button.grid(row=1, column=3), chart_button.grid(row=1, column=4), reset_button.grid(row=1, column=5), quit_button.grid(row=1, column=6)
 
@@ -130,16 +136,14 @@ class Expenses(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-        # label = tk.Label(self, text="This is page 2")
-        # label.pack(side="top", fill="x", pady=10)
         # Navigation buttons
-        home_button = tk.Button(self, text="Home", font=10, width=11, height=2, bg="#216d45", fg="white", command=lambda: controller.show_frame("Home"))
-        cat_button = tk.Button(self, text="Categories", font=10, width=11, height=2, bg="#216d45", fg="white", command=lambda: controller.show_frame("Categories"))
-        inc_button = tk.Button(self, text="Incomes", font=10, width=11, height=2, bg="#216d45", fg="white", command=lambda: controller.show_frame("Incomes"))
-        exp_button = tk.Button(self, text="Expenses", font=10, width=11, height=2, bg="#216d45", fg="white", command=lambda: controller.show_frame("Expenses"))
-        chart_button = tk.Button(self, text="Chart", font=10, width=11, height=2, bg="#216d45", fg="white", command=lambda: controller.show_frame("Chart"))
-        reset_button = tk.Button(self, text="Reset", font=10, width=11, height=2, bg="#216d45", fg="white", command=lambda: controller.show_frame("Reset"))
-        quit_button = tk.Button(self, text="Quit", font=10, width=11, height=2, bg="#216d45", fg="white", command=quit_verify)
+        home_button = tk.Button(self, text="Home", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=lambda: controller.show_frame("Home"))
+        cat_button = tk.Button(self, text="Categories", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=lambda: controller.show_frame("Categories"))
+        inc_button = tk.Button(self, text="Incomes", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=lambda: controller.show_frame("Incomes"))
+        exp_button = tk.Button(self, text="Expenses", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=lambda: controller.show_frame("Expenses"))
+        chart_button = tk.Button(self, text="Chart", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=lambda: controller.show_frame("Chart"))
+        reset_button = tk.Button(self, text="Reset", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=lambda: controller.show_frame("Reset"))
+        quit_button = tk.Button(self, text="Quit", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=quit_verify)
 
         home_button.grid(row=1, column=0), cat_button.grid(row=1, column=1), inc_button.grid(row=1, column=2), exp_button.grid(row=1, column=3), chart_button.grid(row=1, column=4), reset_button.grid(row=1, column=5), quit_button.grid(row=1, column=6)
 
@@ -149,34 +153,24 @@ class Chart(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-        # label = tk.Label(self, text="This is page 2")
-        # label.pack(side="top", fill="x", pady=10)
         # Navigation buttons
-        home_button = tk.Button(self, text="Home", font=10, width=11, height=2, bg="#216d45", fg="white", command=lambda: controller.show_frame("Home"))
-        cat_button = tk.Button(self, text="Categories", font=10, width=11, height=2, bg="#216d45", fg="white", command=lambda: controller.show_frame("Categories"))
-        inc_button = tk.Button(self, text="Incomes", font=10, width=11, height=2, bg="#216d45", fg="white", command=lambda: controller.show_frame("Incomes"))
-        exp_button = tk.Button(self, text="Expenses", font=10, width=11, height=2, bg="#216d45", fg="white", command=lambda: controller.show_frame("Expenses"))
-        chart_button = tk.Button(self, text="Chart", font=10, width=11, height=2, bg="#216d45", fg="white", command=lambda: controller.show_frame("Chart"))
-        reset_button = tk.Button(self, text="Reset", font=10, width=11, height=2, bg="#216d45", fg="white", command=lambda: controller.show_frame("Reset"))
-        quit_button = tk.Button(self, text="Quit", font=10, width=11, height=2, bg="#216d45", fg="white", command=quit_verify)
+        home_button = tk.Button(self, text="Home", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=lambda: controller.show_frame("Home"))
+        cat_button = tk.Button(self, text="Categories", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=lambda: controller.show_frame("Categories"))
+        inc_button = tk.Button(self, text="Incomes", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=lambda: controller.show_frame("Incomes"))
+        exp_button = tk.Button(self, text="Expenses", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=lambda: controller.show_frame("Expenses"))
+        chart_button = tk.Button(self, text="Chart", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=lambda: controller.show_frame("Chart"))
+        reset_button = tk.Button(self, text="Reset", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=lambda: controller.show_frame("Reset"))
+        quit_button = tk.Button(self, text="Quit", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=quit_verify)
 
         home_button.grid(row=1, column=0), cat_button.grid(row=1, column=1), inc_button.grid(row=1, column=2), exp_button.grid(row=1, column=3), chart_button.grid(row=1, column=4), reset_button.grid(row=1, column=5), quit_button.grid(row=1, column=6)
 
 
 if __name__ == "__main__":
     app = budgetApp()
-    app.geometry("762x600")
+    app.geometry("762x700")
     app.mainloop()
 
     
-    
-# def clear_screen():
-#     # Get system OS so clear works with Windows, Mac, Linux
-#     if name == "nt":
-#         _ = system("cls")
-#     else:
-#         _ = system("clear")
-
 
 # def open_excel():
 #     # Get system OS so clear works with Windows, Mac, Linux
@@ -187,33 +181,6 @@ if __name__ == "__main__":
 #     else:
 #         _ = system("open -a 'Microsoft Excel.app' 'BudgetTracker.xlsx'")
 
-
-# def print_banner():
-#     # Print Banner
-#     ascii_banner = pyfiglet.figlet_format("Branham Budget Tracker")
-#     print(ascii_banner)
-# print_banner()
-
-
-# def get_name():
-#     # Get user's name and generate welcome message
-#     prompt_name = input("Please enter your first name: ")
-#     first_name = str(prompt_name).upper()
-#     print("\n\nWelcome to Branham Budget Tracker, {}!\n".format(first_name))
-# get_name()
-
-
-# def month_remaining():
-#     # Get month and days remaining
-#     today = datetime.datetime.today()
-#     today_date = today.strftime("%B %d, %Y")
-#     print("Today is " + today_date)
-#     day_of = int(today.strftime("%d"))
-#     now = datetime.datetime.now()
-#     month_end = monthrange(now.year, now.month)[1]
-#     days_remaining = (month_end) - (day_of)
-#     print("There are {} days remaining in the month.\n".format(days_remaining))
-# month_remaining()
 
 
 # def create_workbook():
