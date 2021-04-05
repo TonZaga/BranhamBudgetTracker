@@ -56,7 +56,7 @@ class budgetApp(tk.Tk):
 
         # Configure the container where page frames show
         container = tk.Frame(self)
-        container.pack(side="top", fill="both", expand=True)
+        container.pack(side="top", fill="y", expand=False)
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
 
@@ -108,10 +108,32 @@ class Categories(tk.Frame):
         reset_button = tk.Button(self, text="Reset", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=lambda: controller.show_frame("Reset"))
         quit_button = tk.Button(self, text="Quit", font=("Helvetica", 12), width=11, bg="#216d45", fg="white", command=quit_verify)
 
-        home_button.grid(row=1, column=0), cat_button.grid(row=1, column=1), inc_button.grid(row=1, column=2), exp_button.grid(row=1, column=3), chart_button.grid(row=1, column=4), reset_button.grid(row=1, column=5), quit_button.grid(row=1, column=6)
+        # Build page title
+        budget_cat = tk.Label(self, text="Budgeted amount per category", font=14)
+        # Build column headers
+        cat1 = tk.Label(self, text="Mortgage/Rent")
+        cat2 = tk.Label(self, text="Utilities")
+        cat3 = tk.Label(self, text="Transportation")
+        cat4 = tk.Label(self, text="Groceries")
+        cat5 = tk.Label(self, text="Entertainment")
+        cat6 = tk.Label(self, text="Other")
+        cat7 = tk.Label(self, text="Debts")
+        # Build text boxes for amounts
+        cat1_budget = tk.Entry(self, width=10)
+        cat2_budget = tk.Entry(self, width=10)
+        cat3_budget = tk.Entry(self, width=10)
+        cat4_budget = tk.Entry(self, width=10)
+        cat5_budget = tk.Entry(self, width=10)
+        cat6_budget = tk.Entry(self, width=10)
+        cat7_budget = tk.Entry(self, width=10)
 
-        # Build category fields
-        
+        # Build out grid layout
+            # Navigation
+        home_button.grid(row=1, column=0), cat_button.grid(row=1, column=1), inc_button.grid(row=1, column=2), exp_button.grid(row=1, column=3), chart_button.grid(row=1, column=4), reset_button.grid(row=1, column=5), quit_button.grid(row=1, column=6)
+            # Categories
+        budget_cat.grid(row=2, column=0, columnspan=7, ipady=20), cat1.grid(row=3, column=0), cat2.grid(row=3, column=1), cat3.grid(row=3, column=2), cat4.grid(row=3, column=3), cat5.grid(row=3, column=4), cat6.grid(row=3, column=5), cat7.grid(row=3, column=6)
+            # Entry fields
+        cat1_budget.grid(row=4, column=0), cat2_budget.grid(row=4, column=1), cat3_budget.grid(row=4, column=2), cat4_budget.grid(row=4, column=3), cat5_budget.grid(row=4, column=4), cat6_budget.grid(row=4, column=5), cat7_budget.grid(row=4, column=6)
 
 
 class Incomes(tk.Frame):
